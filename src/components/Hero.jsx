@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { ArrowRight, Play, X } from 'lucide-react';
 
 // 1. IMPORT BOTH VIDEOS
-import heroBgVideo from '../assets/hero-video.mp4'; // The loop on the home page
-import demoPopupVideo from '../assets/demo.mp4';    // The actual demo for the button
+import heroBgVideo from '../assets/hero-video.mp4'; // Background Loop
+import demoPopupVideo from '../assets/demo.mp4';    // Popup Demo
 
 export default function Hero() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
@@ -16,17 +16,32 @@ export default function Hero() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden pt-20">
+    <div className="relative min-h-screen flex items-center bg-black overflow-hidden pt-20">
       
-      {/* BACKGROUND EFFECTS */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black"></div>
-      <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+      {/* ------------------------------------------------------ */}
+      {/* 1. BACKGROUND VIDEO LAYER (Full Screen)                */}
+      {/* ------------------------------------------------------ */}
+      <div className="absolute inset-0 w-full h-full z-0">
+         <video 
+           autoPlay 
+           loop 
+           muted 
+           playsInline 
+           className="w-full h-full object-cover opacity-50" // Adjusted opacity for readability
+           src={heroBgVideo} 
+         />
+         {/* Overlays to make text readable */}
+         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
+         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+      </div>
 
       <div className="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center gap-12">
         
-        {/* LEFT SIDE: TEXT */}
-        <div className="flex-1 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-purple-400 text-xs font-bold mb-6">
+        {/* ------------------------------------------------------ */}
+        {/* 2. LEFT SIDE: TEXT (Kept exactly as you asked)        */}
+        {/* ------------------------------------------------------ */}
+        <div className="flex-1 text-center md:text-left max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900/80 backdrop-blur border border-zinc-800 text-purple-400 text-xs font-bold mb-6">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
@@ -41,7 +56,7 @@ export default function Hero() {
             </span>
           </h1>
           
-          <p className="text-gray-400 text-lg mb-8 max-w-lg mx-auto md:mx-0">
+          <p className="text-gray-300 text-lg mb-8 max-w-lg mx-auto md:mx-0">
             AI Masterji - Child's CoParent. It sees, speaks, and teaches safely—powered by the intelligence of ProfessorsAI.
           </p>
           
@@ -56,37 +71,21 @@ export default function Hero() {
             {/* WATCH DEMO BUTTON */}
             <button 
               onClick={() => setIsVideoOpen(true)}
-              className="flex items-center gap-2 px-8 py-4 rounded-full border border-zinc-700 text-white hover:bg-zinc-900 transition-all group"
+              className="flex items-center gap-2 px-8 py-4 rounded-full border border-zinc-500 bg-black/30 backdrop-blur text-white hover:bg-zinc-900 transition-all group"
             >
               <Play size={18} fill="currentColor" className="group-hover:text-purple-500 transition-colors" /> Watch Demo
             </button>
           </div>
         </div>
 
-        {/* RIGHT SIDE: HERO VIDEO (Loop) */}
-        <div className="flex-1 flex justify-center relative">
-            <div className="relative w-full max-w-lg aspect-video rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl shadow-purple-500/20 group">
-                {/* Plays hero-video.mp4 */}
-                <video 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-                  src={heroBgVideo} 
-                >
-                  Your browser does not support the video tag.
-                </video>
-
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
-            </div>
-        </div>
+        {/* RIGHT SIDE REMOVED (Because video is now in background) */}
+        {/* Empty div to balance layout if needed, or just leave flex-1 on text to take space */}
+        <div className="hidden md:block flex-1"></div> 
 
       </div>
 
       {/* ------------------------------------------- */}
-      {/* VIDEO POPUP MODAL (Triggers on Click)       */}
+      {/* 3. VIDEO POPUP MODAL (Triggers on Click)    */}
       {/* ------------------------------------------- */}
       {isVideoOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">

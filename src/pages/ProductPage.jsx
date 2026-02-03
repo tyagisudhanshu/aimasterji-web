@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // <--- Changed Link to useNavigate
 import { ArrowLeft, ShoppingCart, Zap, Check, Shield, Cpu } from 'lucide-react';
 import { products } from '../data/products'; 
+import toast from 'react-hot-toast';
 
 export default function ProductPage() {
   const { id } = useParams();
