@@ -14,7 +14,6 @@ export default function Navbar({ user }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 1. SCROLL EFFECT
   useEffect(() => {
     const controlNavbar = () => {
       const currentScrollY = window.scrollY;
@@ -30,17 +29,14 @@ export default function Navbar({ user }) {
     return () => window.removeEventListener('scroll', controlNavbar);
   }, [lastScrollY]);
 
-  // 2. SCROLL TO TOP FUNCTION (Fixes Home Button)
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setIsMobileMenuOpen(false);
   };
 
-  // 3. FAQ SCROLL LOGIC
   const handleFaqClick = (e) => {
     e.preventDefault(); 
     setIsMobileMenuOpen(false);
-    
     if (location.pathname === '/') {
       const faqSection = document.getElementById('faq-section');
       if (faqSection) faqSection.scrollIntoView({ behavior: 'smooth' });
@@ -60,10 +56,8 @@ export default function Navbar({ user }) {
   return (
     <nav className={`fixed left-0 right-0 z-50 flex flex-col items-center transition-transform duration-300 ${isVisible ? 'translate-y-2' : '-translate-y-full'}`}>
       
-      {/* WIDE PILL DESIGN */}
       <div className="bg-[#0a0a0a] w-[99%] max-w-none rounded-full border border-zinc-800 shadow-2xl px-4 md:px-6 py-3 flex items-center justify-between relative z-50">
         
-        {/* LOGO (Now Scrolls to Top) */}
         <Link to="/" onClick={scrollToTop} className="flex flex-col leading-none select-none">
             <div className="flex items-center text-2xl md:text-3xl font-black tracking-tighter">
               <span className="text-white">AI</span> 
@@ -74,10 +68,9 @@ export default function Navbar({ user }) {
             </span>
         </Link>
 
-        {/* LINKS */}
+        {/* LINKS SECTION */}
         <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-300">
            
-           {/* HOME LINK (Now Scrolls to Top) */}
            <Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors">Home</Link>
            
            {/* PRODUCT DROPDOWN */}
@@ -85,29 +78,36 @@ export default function Navbar({ user }) {
              <button className="flex items-center gap-1 hover:text-white transition-colors py-2">
                Products <ChevronDown size={14} className="group-hover:rotate-180 transition-transform"/>
              </button>
-             
-             {/* DROPDOWN MENU */}
              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-[#0a0a0a] border border-zinc-800 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top overflow-hidden">
                <div className="py-2 flex flex-col">
                  <Link to="/product/1" className="px-5 py-3 hover:bg-zinc-900 text-white block text-left border-b border-zinc-800/50">
                     <span className="block text-sm font-bold text-pink-400">Mimi</span>
-                    <span className="text-xs text-zinc-500">The Storyteller (Ages 4-8)</span>
+                    <span className="text-xs text-zinc-500">The Storyteller</span>
                  </Link>
-                 <Link to="/product/2" className="px-5 py-3 hover:bg-zinc-900 text-white block text-left border-b border-zinc-800/50">
+                 <Link to="/product/9" className="px-5 py-3 hover:bg-zinc-900 text-white block text-left border-b border-zinc-800/50">
                     <span className="block text-sm font-bold text-orange-400">Simba</span>
-                    <span className="text-xs text-zinc-500">The Coder (Ages 7-12)</span>
+                    <span className="text-xs text-zinc-500">The Coder</span>
                  </Link>
-                 <Link to="/product/3" className="px-5 py-3 hover:bg-zinc-900 text-white block text-left border-b border-zinc-800/50">
+                 <Link to="/product/4" className="px-5 py-3 hover:bg-zinc-900 text-white block text-left border-b border-zinc-800/50">
                     <span className="block text-sm font-bold text-purple-400">Prince</span>
-                    <span className="text-xs text-zinc-500">The Pro (Ages 12+)</span>
+                    <span className="text-xs text-zinc-500">The Pro</span>
                  </Link>
-                 {/* VIEW ALL LINK */}
                  <a href="/#latest-toys" className="px-5 py-3 hover:bg-zinc-900 text-white block text-left font-bold bg-zinc-900/50">
                     View All Toys →
                  </a>
                </div>
              </div>
            </div>
+
+           {/* SALE BUTTON (Red & Bold) */}
+           <Link to="/sale" className="text-red-500 font-bold hover:text-red-400 transition-colors flex items-center gap-1 animate-pulse">
+             Sale
+           </Link>
+
+           {/* SUPPORT BUTTON */}
+           <Link to="/support" className="hover:text-white transition-colors">
+             Support
+           </Link>
            
            <button onClick={handleFaqClick} className="hover:text-white transition-colors cursor-pointer bg-transparent border-none">
               FAQ
@@ -143,18 +143,18 @@ export default function Navbar({ user }) {
         </div>
       </div>
 
-       {/* MOBILE MENU DROPDOWN */}
+       {/* MOBILE MENU */}
        {isMobileMenuOpen && (
         <div className="md:hidden bg-zinc-950 border-t border-zinc-800 absolute top-full mt-4 w-[99%] rounded-2xl p-6 flex flex-col gap-6 text-zinc-300 shadow-2xl">
           <Link to="/" onClick={scrollToTop} className="text-xl font-bold text-white">Home</Link>
-          <Link to="/why-aimasterji" onClick={() => setIsMobileMenuOpen(false)} className="text-xl">About</Link>
+          <Link to="/sale" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-red-500">Sale 🔥</Link>
+          <Link to="/support" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-white">Support</Link>
           
           <div className="flex flex-col gap-2 border-l-2 border-zinc-800 pl-4">
             <span className="text-zinc-500 uppercase text-xs font-bold tracking-wider">Products</span>
             <Link to="/product/1" onClick={() => setIsMobileMenuOpen(false)} className="text-lg text-pink-400">Mimi</Link>
             <Link to="/product/2" onClick={() => setIsMobileMenuOpen(false)} className="text-lg text-orange-400">Simba</Link>
             <Link to="/product/3" onClick={() => setIsMobileMenuOpen(false)} className="text-lg text-purple-400">Prince</Link>
-            <a href="/#latest-toys" onClick={() => setIsMobileMenuOpen(false)} className="text-lg text-white font-bold mt-2">View All →</a>
           </div>
 
           <button onClick={handleFaqClick} className="text-xl text-left text-zinc-300">FAQ</button>

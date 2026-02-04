@@ -6,9 +6,10 @@ import { useCart } from '../context/CartContext';
 export default function CartPage() {
   const { cartItems, addToCart, decreaseQuantity, removeFromCart } = useCart();
 
-  // Calculate Total Price (Assuming price is like "$199")
+  // 1. CALCULATE TOTAL (Logic remains same, it cleans the string to get numbers)
   const totalPrice = cartItems.reduce((total, item) => {
-    const priceNumber = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+    // This removes any existing $ or ₹ symbols and commas to do the math
+    const priceNumber = parseFloat(item.price.toString().replace(/[^0-9.]/g, ''));
     return total + priceNumber * item.quantity;
   }, 0);
 
@@ -40,7 +41,11 @@ export default function CartPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold">{item.name}</h3>
-                  <p className="text-purple-400">{item.price}</p>
+                  {/* CHANGE 1: Force Rupee Symbol on individual items */}
+                  {/* We strip existing symbols just in case, then add ₹ */}
+                  <p className="text-purple-400">
+                    ₹{item.price.toString().replace(/[^0-9.]/g, '')}
+                  </p>
                 </div>
               </div>
 
@@ -66,7 +71,8 @@ export default function CartPage() {
           <div className="mt-8 flex flex-col items-end border-t border-zinc-800 pt-8">
             <div className="flex justify-between w-full sm:w-64 text-xl font-bold mb-6">
               <span>Total:</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              {/* CHANGE 2: Replaced '$' with '₹' and .toFixed(2) with .toLocaleString('en-IN') */}
+              <span>₹{totalPrice.toLocaleString('en-IN')}</span>
             </div>
             
             <button className="bg-white text-black font-bold px-8 py-4 rounded-full hover:bg-gray-200 flex items-center gap-2 w-full sm:w-auto justify-center">

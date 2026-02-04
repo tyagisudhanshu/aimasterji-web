@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'; // <--- Changed Link 
 import { ArrowLeft, ShoppingCart, Zap, Check, Shield, Cpu } from 'lucide-react';
 import { products } from '../data/products'; 
 import toast from 'react-hot-toast';
+import Reviews from '../components/Reviews';
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -67,22 +68,34 @@ export default function ProductPage() {
             <p className="text-gray-400 text-lg mb-8 leading-relaxed">
               {product.desc} 
               <br className="mb-4"/>
-              This isn't just a toy. {product.name} uses advanced computer vision to understand its environment and interacts with your child to teach logic, coding, and creativity.
+              A soft, huggable friend that glows gently. Plays calming lullabies to help your baby sleep better. Helps your toddler speak their first words! This toy repeats what they say in a funny, encouraging voice. Encourages crawling! Bunny hops away safely, motivating your little one to chase and move.
             </p>
 
             {/* FEATURES LIST */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
                <div className="flex items-center gap-3 text-sm text-gray-300">
-                  <Cpu size={18} className="text-blue-500"/> AI Processor Inside
+                  <Cpu size={18} className="text-blue-500"/> AI Processor Inside (Screen-free fun)
                </div>
                <div className="flex items-center gap-3 text-sm text-gray-300">
-                  <Shield size={18} className="text-green-500"/> Child-Safe Design
+                  <Shield size={18} className="text-green-500"/> Educational Content with saftey features
                </div>
                <div className="flex items-center gap-3 text-sm text-gray-300">
-                  <Check size={18} className="text-purple-500"/> Python Programmable
+                  <Check size={18} className="text-purple-500"/> Parent Voice Cloning
                </div>
                <div className="flex items-center gap-3 text-sm text-gray-300">
-                  <Check size={18} className="text-purple-500"/> Voice Control
+                  <Check size={18} className="text-purple-500"/> Wifi Connected
+               </div>
+               <div className="flex items-center gap-3 text-sm text-gray-300">
+                  <Check size={18} className="text-purple-500"/> Waterproof
+               </div>
+               <div className="flex items-center gap-3 text-sm text-gray-300">
+                  <Check size={18} className="text-purple-500"/> Voice Powered chat
+               </div>
+               <div className="flex items-center gap-3 text-sm text-gray-300">
+                  <Check size={18} className="text-purple-500"/> Cry Monitor
+               </div>
+               <div className="flex items-center gap-3 text-sm text-gray-300">
+                  <Check size={18} className="text-purple-500"/> Two-Way Audio
                </div>
             </div>
 
@@ -99,6 +112,7 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+      <Reviews />
     </div>
   );
 }

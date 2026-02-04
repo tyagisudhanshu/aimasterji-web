@@ -57,7 +57,7 @@ export default function Footer() {
 
         {/* BOTTOM BAR */}
         <div className="border-t border-zinc-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-zinc-600">© 2024 AiMasterji. All rights reserved.</p>
+          <p className="text-zinc-600">© 2026 AiMasterji. All rights reserved.</p>
           
           <div className="flex gap-4">
             <a href="#" className="text-zinc-600 hover:text-white transition-colors"><Facebook size={20} /></a>

@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 // COMPONENTS
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import HomeReviews from './components/HomeReviews';
 import ProductSection from './components/ProductSection';
 import EnquiryForm from './components/EnquiryForm';
 import Footer from './components/Footer';
@@ -17,6 +18,8 @@ import CartPage from './pages/CartPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import Legal from './pages/Legal';
+import SalePage from './pages/SalePage';
+import SupportPage from './pages/SupportPage'
 
 // HOME PAGE LAYOUT
 // 1. Hero (Video)
@@ -26,6 +29,7 @@ import Legal from './pages/Legal';
 const Home = () => (
   <div>
     <Hero />
+    <HomeReviews />
     <ProductSection />
     <FAQ />           {/* <--- FAQ is now BEFORE the Enquiry Form */}
     <EnquiryForm />   {/* <--- Enquiry Form is at the bottom */}
@@ -58,6 +62,8 @@ export default function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/privacy" element={<Legal />} />
             <Route path="/terms" element={<Legal />} />
+            <Route path="/sale" element={<SalePage />} />
+            <Route path="/support" element={<SupportPage />} />
           </Routes>
         </main>
 

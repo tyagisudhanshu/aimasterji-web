@@ -5,7 +5,6 @@ import { products } from '../data/products';
 import { useCart } from '../context/CartContext'; 
 
 export default function ProductSection() {
-  // Get all the tools we need
   const { cartItems, addToCart, decreaseQuantity } = useCart();
 
   return (
@@ -24,7 +23,6 @@ export default function ProductSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => {
             
-            // Check if this specific product is already in the cart
             const cartItem = cartItems.find(item => item.id === product.id);
             const quantity = cartItem ? cartItem.quantity : 0;
 
@@ -35,7 +33,7 @@ export default function ProductSection() {
                 <Link to={`/product/${product.id}`} className="block">
                     <div className="aspect-square bg-zinc-800 relative overflow-hidden flex items-center justify-center cursor-pointer">
                         <img 
-                          src={product.image || `https://api.dicebear.com/7.x/bottts/svg?seed=${product.name}`} 
+                          src={product.image} 
                           alt={product.name}
                           className={`transition-transform duration-500 group-hover:scale-110 
                             ${product.image ? 'w-full h-full object-cover' : 'w-4/5 h-4/5 object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]'}`
@@ -55,11 +53,24 @@ export default function ProductSection() {
                       <span className="text-purple-400 font-bold">{product.price}</span>
                   </div>
                   
-                  <p className="text-gray-500 text-sm mb-6 h-10 line-clamp-2">
+                  <p className="text-gray-500 text-sm mb-3 h-10 line-clamp-2">
                       {product.desc}
                   </p>
 
-                  <div className="flex gap-2 h-10"> {/* Fixed height to prevent jumping */}
+                  {/* --- NEW: FEATURES LIST --- */}
+                  <div className="mb-6 grid grid-cols-2 gap-x-2 gap-y-2">
+                    {/* We check if features exist, then show max 3 items */}
+                    {product.features && product.features.slice(0, 6).map((feature, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-sm text-zinc-400 ">
+                        {/* Bullet point that matches the robot color */}
+                        <div className={`w-1.5 h-1.5 rounded-full ${product.color}`}></div>
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                  {/* ------------------------- */}
+
+                  <div className="flex gap-2 h-10"> 
                       
                       {/* ORDER BUTTON */}
                       <Link to={`/product/${product.id}`} className="flex-1">
@@ -68,22 +79,20 @@ export default function ProductSection() {
                           </button>
                       </Link>
                       
-                      {/* ADD / COUNTER BUTTON (THE MAGIC LOGIC) */}
+                      {/* ADD / COUNTER BUTTON */}
                       {quantity > 0 ? (
-                        // OPTION A: Show Counter if added
                         <div className="flex-1 flex items-center justify-between bg-purple-600 text-white rounded-lg px-2">
-                           <button onClick={() => decreaseQuantity(product.id)} className="p-1 hover:bg-purple-700 rounded">
+                            <button onClick={() => decreaseQuantity(product.id)} className="p-1 hover:bg-purple-700 rounded">
                              <Minus size={14} />
-                           </button>
-                           
-                           <span className="font-bold text-sm">{quantity}</span>
-                           
-                           <button onClick={() => addToCart(product)} className="p-1 hover:bg-purple-700 rounded">
+                            </button>
+                            
+                            <span className="font-bold text-sm">{quantity}</span>
+                            
+                            <button onClick={() => addToCart(product)} className="p-1 hover:bg-purple-700 rounded">
                              <Plus size={14} />
-                           </button>
+                            </button>
                         </div>
                       ) : (
-                        // OPTION B: Show "Add" if not added
                         <button 
                             onClick={() => addToCart(product)}
                             className="flex-1 h-full bg-transparent border border-zinc-700 text-white text-sm font-bold rounded-lg hover:bg-zinc-800 transition-colors flex items-center justify-center gap-1"

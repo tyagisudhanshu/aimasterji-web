@@ -57,7 +57,7 @@ export default function Hero() {
           </h1>
           
           <p className="text-gray-300 text-lg mb-8 max-w-lg mx-auto md:mx-0">
-            AI Masterji - Child's CoParent. It sees, speaks, and teaches safely—powered by the intelligence of ProfessorsAI.
+            AImasterji - Child's CoParent. It sees, speaks, and teaches safely—powered by the intelligence of ProfessorsAI.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
