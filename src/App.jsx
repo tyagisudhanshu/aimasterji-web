@@ -10,6 +10,7 @@ import ProductSection from './components/ProductSection';
 import EnquiryForm from './components/EnquiryForm';
 import Footer from './components/Footer';
 import FAQ from './components/FAQ'; // Import FAQ
+import WhatsAppButton from './components/WhatsAppButton';
 
 // PAGES
 import About from './pages/About';
@@ -67,6 +68,7 @@ export default function App() {
           </Routes>
         </main>
 
+        <WhatsAppButton />
         <Footer />
       </div>
     </Router>

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // <--- Changed Link to useNavigate
-import { ArrowLeft, ShoppingCart, Zap, Check, Shield, Cpu } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Zap, Check, Shield, Cpu, MessageCircle } from 'lucide-react';
 import { products } from '../data/products'; 
 import toast from 'react-hot-toast';
 import Reviews from '../components/Reviews';
@@ -8,6 +8,13 @@ import Reviews from '../components/Reviews';
 export default function ProductPage() {
   const { id } = useParams();
   const navigate = useNavigate(); // <--- This tool controls history
+  const handleWhatsAppQuery = () => {
+  const phoneNumber = "919310297919"; // Replace with your actual number
+  const message = `Hi! I'm interested in buying ${product.name} (Price: ${product.price}). Can you provide more details about its features for a 3-year-old?`;
+  
+  // This opens WhatsApp in a new tab
+  window.open(`https://wa.me/${919310297919}?text=${encodeURIComponent(message)}`, '_blank');
+};
 
   // Scroll to top ONLY when this product page loads
   useEffect(() => {
@@ -107,6 +114,15 @@ export default function ProductPage() {
               <button className="flex-1 bg-zinc-900 border border-zinc-700 text-white font-bold py-4 rounded-full hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2">
                 <ShoppingCart size={20} /> Add to Cart
               </button>
+              {/* NEW: WhatsApp Query Button */}
+  <button 
+    onClick={handleWhatsAppQuery}
+    className="flex-1 sm:flex-none px-8 py-4 border border-zinc-700 rounded-xl hover:bg-zinc-900 transition-all flex items-center justify-center gap-2 text-[#25D366] font-bold"
+  >
+    {/* Using MessageCircle icon from lucide-react */}
+    <MessageCircle size={20} fill="currentColor" className="opacity-20" /> 
+    Inquiry
+  </button>
             </div>
 
           </div>
