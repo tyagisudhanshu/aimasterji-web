@@ -21,6 +21,7 @@ import DashboardPage from './pages/DashboardPage';
 import Legal from './pages/Legal';
 import SalePage from './pages/SalePage';
 import SupportPage from './pages/SupportPage'
+import AILab from './pages/AILab'; // Import the new page
 
 // HOME PAGE LAYOUT
 // 1. Hero (Video)
@@ -65,6 +66,7 @@ export default function App() {
             <Route path="/terms" element={<Legal />} />
             <Route path="/sale" element={<SalePage />} />
             <Route path="/support" element={<SupportPage />} />
+            <Route path="/try-it-out" element={<AILab />} />
           </Routes>
         </main>
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowRight, Play, X } from 'lucide-react';
+import { Link } from 'react-router-dom'; // 1. IMPORT LINK
+import { ArrowRight, Play, X, Sparkles } from 'lucide-react';
 
 // 1. IMPORT BOTH VIDEOS
 import heroBgVideo from '../assets/hero-video.mp4'; // Background Loop
@@ -18,28 +19,23 @@ export default function Hero() {
   return (
     <div className="relative min-h-screen flex items-center bg-black overflow-hidden pt-20">
       
-      {/* ------------------------------------------------------ */}
-      {/* 1. BACKGROUND VIDEO LAYER (Full Screen)                */}
-      {/* ------------------------------------------------------ */}
+      {/* 1. BACKGROUND VIDEO LAYER (Full Screen) */}
       <div className="absolute inset-0 w-full h-full z-0">
          <video 
-           autoPlay 
-           loop 
-           muted 
-           playsInline 
-           className="w-full h-full object-cover opacity-50" // Adjusted opacity for readability
-           src={heroBgVideo} 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="w-full h-full object-cover opacity-50" 
+            src={heroBgVideo} 
          />
-         {/* Overlays to make text readable */}
          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
       </div>
 
       <div className="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center gap-12">
         
-        {/* ------------------------------------------------------ */}
-        {/* 2. LEFT SIDE: TEXT (Kept exactly as you asked)        */}
-        {/* ------------------------------------------------------ */}
+        {/* 2. LEFT SIDE: TEXT */}
         <div className="flex-1 text-center md:text-left max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900/80 backdrop-blur border border-zinc-800 text-purple-400 text-xs font-bold mb-6">
             <span className="relative flex h-2 w-2">
@@ -75,31 +71,30 @@ export default function Hero() {
             >
               <Play size={18} fill="currentColor" className="group-hover:text-purple-500 transition-colors" /> Watch Demo
             </button>
+
+            {/* 2. ADDED: TRY IT OUT BUTTON (Links to AI Lab Page) */}
+            <Link 
+              to="/try-it-out"
+              className="flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold hover:scale-105 transition-all shadow-lg shadow-purple-500/25"
+            >
+              <Sparkles size={18} /> Try It Out
+            </Link>
           </div>
         </div>
 
-        {/* RIGHT SIDE REMOVED (Because video is now in background) */}
-        {/* Empty div to balance layout if needed, or just leave flex-1 on text to take space */}
         <div className="hidden md:block flex-1"></div> 
 
       </div>
 
-      {/* ------------------------------------------- */}
-      {/* 3. VIDEO POPUP MODAL (Triggers on Click)    */}
-      {/* ------------------------------------------- */}
+      {/* 3. VIDEO POPUP MODAL */}
       {isVideoOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-          
-          {/* Black Overlay */}
           <div 
             className="absolute inset-0 bg-black/90 backdrop-blur-sm"
             onClick={() => setIsVideoOpen(false)}
           ></div>
 
-          {/* Video Player Box */}
           <div className="relative w-full max-w-5xl bg-black rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl animate-in fade-in zoom-in duration-300">
-            
-            {/* Close Button */}
             <button 
               onClick={() => setIsVideoOpen(false)}
               className="absolute top-4 right-4 z-20 bg-black/50 hover:bg-red-600 text-white p-2 rounded-full backdrop-blur border border-zinc-700 transition-colors"
@@ -107,7 +102,6 @@ export default function Hero() {
               <X size={24} />
             </button>
 
-            {/* The Demo Video Player (Plays demo.mp4) */}
             <video 
               className="w-full h-auto max-h-[80vh]"
               controls
@@ -116,7 +110,6 @@ export default function Hero() {
             >
               Your browser does not support the video tag.
             </video>
-
           </div>
         </div>
       )}
