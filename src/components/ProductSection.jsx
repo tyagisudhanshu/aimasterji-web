@@ -1,9 +1,67 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Zap, Plus, Minus } from 'lucide-react';
 import { products } from '../data/products';
 import { useCart } from '../context/CartContext'; 
 
+// --- 1. NEW HELPER COMPONENT FOR VIDEO ---
+// This handles the play/pause logic for each individual product
+const ProductMedia = ({ image, video, alt }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const videoRef = useRef(null);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (videoRef.current) videoRef.current.play();
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  return (
+    <div 
+      className="aspect-square bg-zinc-800 relative overflow-hidden flex items-center justify-center cursor-pointer"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Static Image (Fades out on hover) */}
+      <img 
+        src={image} 
+        alt={alt}
+        className={`transition-all duration-500 absolute inset-0 w-full h-full object-cover
+          ${isHovered ? 'opacity-0 scale-110' : 'opacity-100 scale-100'}
+        `}
+      />
+
+      {/* Video (Visible on hover) */}
+      {video && (
+        <video
+          ref={videoRef}
+          src={video}
+          muted 
+          loop 
+          playsInline
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500
+            ${isHovered ? 'opacity-100' : 'opacity-0'}
+          `}
+        />
+      )}
+
+      {/* AI Badge */}
+      <div className="absolute top-3 right-3 bg-black/80 backdrop-blur text-white text-xs font-bold px-2 py-1 rounded-md border border-zinc-700 z-10">
+        AI INSIDE
+      </div>
+    </div>
+  );
+};
+
+
+// --- 2. YOUR MAIN SECTION (Unchanged logic, just swapped the image part) ---
 export default function ProductSection() {
   const { cartItems, addToCart, decreaseQuantity } = useCart();
 
@@ -29,20 +87,13 @@ export default function ProductSection() {
             return (
               <div key={product.id} className="group relative bg-zinc-900/50 border border-zinc-800 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-300 hover:transform hover:-translate-y-2">
                 
-                {/* IMAGE LINK */}
+                {/* --- SWAPPED OLD IMG FOR NEW COMPONENT --- */}
                 <Link to={`/product/${product.id}`} className="block">
-                    <div className="aspect-square bg-zinc-800 relative overflow-hidden flex items-center justify-center cursor-pointer">
-                        <img 
-                          src={product.image} 
-                          alt={product.name}
-                          className={`transition-transform duration-500 group-hover:scale-110 
-                            ${product.image ? 'w-full h-full object-cover' : 'w-4/5 h-4/5 object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]'}`
-                          }
-                        />
-                        <div className="absolute top-3 right-3 bg-black/80 backdrop-blur text-white text-xs font-bold px-2 py-1 rounded-md border border-zinc-700">
-                          AI INSIDE
-                        </div>
-                    </div>
+                    <ProductMedia 
+                      image={product.image}
+                      video={product.video} // Make sure your data has this!
+                      alt={product.name}
+                    />
                 </Link>
 
                 <div className="p-6">
@@ -57,21 +108,17 @@ export default function ProductSection() {
                       {product.desc}
                   </p>
 
-                  {/* --- NEW: FEATURES LIST --- */}
+                  {/* FEATURES LIST */}
                   <div className="mb-6 grid grid-cols-2 gap-x-2 gap-y-2">
-                    {/* We check if features exist, then show max 3 items */}
                     {product.features && product.features.slice(0, 6).map((feature, idx) => (
                       <div key={idx} className="flex items-center gap-2 text-sm text-zinc-400 ">
-                        {/* Bullet point that matches the robot color */}
                         <div className={`w-1.5 h-1.5 rounded-full ${product.color}`}></div>
                         {feature}
                       </div>
                     ))}
                   </div>
-                  {/* ------------------------- */}
 
                   <div className="flex gap-2 h-10"> 
-                      
                       {/* ORDER BUTTON */}
                       <Link to={`/product/${product.id}`} className="flex-1">
                           <button className="w-full h-full bg-white text-black text-sm font-bold rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-1">

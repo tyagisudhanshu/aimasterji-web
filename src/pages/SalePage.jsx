@@ -12,24 +12,24 @@ const saleProducts = [
   {
     id: 1, 
     name: "Mimi (Starter)",
-    originalPrice: "2,999",
-    salePrice: "1,999",
+    originalPrice: "5,999",
+    salePrice: "4,999",
     image: mimiImg, // <--- USE THE IMPORTED VARIABLE
     badge: "33% OFF"
   },
   {
     id: 2, 
     name: "Bebo",
-    originalPrice: "2,999",
-    salePrice: "1,999",
+    originalPrice: "5,999",
+    salePrice: "4,999",
     image: beboImg, // <--- USE THE IMPORTED VARIABLE
     badge: "BEST SELLER"
   },
   {
     id: 3, 
     name: "Bunny",
-    originalPrice: "4,999",
-    salePrice: "3,999",
+    originalPrice: "9,999",
+    salePrice: "7,999",
     image: bunnyImg, // <--- USE THE IMPORTED VARIABLE
     badge: "LIMITED DEAL"
   }
