@@ -1,17 +1,167 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Trash2, Plus, Minus, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Trash2, Plus, Minus, ArrowRight, Tag, X, CheckCircle2, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { sendOrderEmail } from '../utils/notifications';
+import { db } from '../firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import toast from 'react-hot-toast';
+
+// ── Valid coupon codes ───────────────────────────────────────────────────────
+const COUPONS = {
+  'WELCOME10': { type: 'percent', value: 10,  label: '10% off your first order'  },
+  'SAVE20':    { type: 'percent', value: 20,  label: '20% off'                    },
+  'FLAT500':   { type: 'flat',    value: 500, label: '₹500 flat off'               },
+  'LAUNCH50':  { type: 'percent', value: 50,  label: '50% off — launch special'   },
+};
+
+function calcDiscount(coupon, subtotal) {
+  if (!coupon) return 0;
+  const c = COUPONS[coupon];
+  if (!c) return 0;
+  if (c.type === 'percent') return Math.round(subtotal * c.value / 100);
+  return Math.min(c.value, subtotal);
+}
 
 export default function CartPage() {
-  const { cartItems, addToCart, decreaseQuantity, removeFromCart } = useCart();
+  const { cartItems, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // 1. CALCULATE TOTAL (Logic remains same, it cleans the string to get numbers)
-  const totalPrice = cartItems.reduce((total, item) => {
-    // This removes any existing $ or ₹ symbols and commas to do the math
-    const priceNumber = parseFloat(item.price.toString().replace(/[^0-9.]/g, ''));
-    return total + priceNumber * item.quantity;
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState('');
+  const [couponError, setCouponError]     = useState('');
+  const [placing, setPlacing] = useState(false);
+
+  const subtotal = cartItems.reduce((total, item) => {
+    const price = parseFloat(item.price.toString().replace(/[^0-9.]/g, ''));
+    return total + price * item.quantity;
   }, 0);
+
+  const discount   = calcDiscount(appliedCoupon, subtotal);
+  const finalTotal = subtotal - discount;
+
+  function applyCoupon() {
+    const code = couponInput.trim().toUpperCase();
+    if (!code) return;
+    if (COUPONS[code]) {
+      setAppliedCoupon(code);
+      setCouponError('');
+      setCouponInput('');
+      toast.success(`Coupon "${code}" applied — ${COUPONS[code].label}!`);
+    } else {
+      setCouponError('Invalid coupon code. Please try again.');
+    }
+  }
+
+  function removeCoupon() {
+    setAppliedCoupon('');
+    setCouponError('');
+    setCouponInput('');
+  }
+
+  async function handleCheckout() {
+    if (!user) {
+      toast.error('Please sign in to place an order.');
+      navigate('/login');
+      return;
+    }
+    setPlacing(true);
+    try {
+      // 1. Generate order ID
+      const orderId = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+      const customerName  = user.displayName || user.email.split('@')[0];
+      const customerEmail = user.email;
+
+      const orderData = {
+        orderId,
+        userId: user.uid,
+        customerName,
+        customerEmail,
+        items: cartItems.map(i => ({
+          id: i.id,
+          name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+          image: i.image || '',
+        })),
+        subtotal,
+        coupon: appliedCoupon || null,
+        discount,
+        total: finalTotal,
+        status: 'pending',
+        createdAt: serverTimestamp(),
+      };
+
+      // 2. Save to Firestore (top-level + user subcollection)
+      await setDoc(doc(db, 'orders', orderId), orderData);
+      await setDoc(doc(db, 'users', user.uid, 'orders', orderId), orderData);
+
+      // 3. Email confirmation to customer (WhatsApp sent on payment success page)
+      await sendOrderEmail({ user, cartItems, subtotal, coupon: appliedCoupon, discount, finalTotal })
+        .catch(() => {});
+
+      // 5. Call backend to get CCAvenue encrypted form data
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+      let payData = null;
+
+      try {
+        const payRes = await fetch(`${backendUrl}/api/payment/initiate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId,
+            amount: finalTotal,
+            customerName,
+            customerEmail,
+          }),
+        });
+
+        if (payRes.ok) {
+          payData = await payRes.json();
+        } else {
+          const errBody = await payRes.json().catch(() => ({}));
+          console.warn('CCAvenue backend error:', payRes.status, errBody);
+        }
+      } catch (networkErr) {
+        console.warn('Backend unreachable:', networkErr.message);
+      }
+
+      // 6. Clear cart
+      clearCart();
+
+      // 7a. If CCAvenue data available — redirect to payment page
+      if (payData?.encRequest && payData?.access_code) {
+        const form  = document.createElement('form');
+        form.method = 'post';
+        form.action = payData.ccavenue_url;
+
+        const addField = (name, value) => {
+          const input = document.createElement('input');
+          input.type  = 'hidden';
+          input.name  = name;
+          input.value = value;
+          form.appendChild(input);
+        };
+        addField('encRequest',  payData.encRequest);
+        addField('access_code', payData.access_code);
+        document.body.appendChild(form);
+        form.submit(); // navigates away — no setPlacing needed
+        return;
+      }
+
+      // 7b. Fallback — backend down or credentials missing
+      toast.success('Order placed! We will contact you to complete payment.');
+      navigate('/orders');
+
+    } catch (err) {
+      console.error('Checkout error:', err);
+      toast.error(`Checkout failed: ${err.message || 'Unknown error'}`);
+    } finally {
+      setPlacing(false);
+    }
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -30,56 +180,120 @@ export default function CartPage() {
       <div className="container mx-auto px-6 max-w-4xl">
         <h1 className="text-4xl font-bold mb-10">Your Cart</h1>
 
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl overflow-hidden p-6">
-          {cartItems.map((item) => (
-            <div key={item.id} className="flex flex-col sm:flex-row items-center justify-between border-b border-zinc-800 py-6 last:border-0 gap-4">
-              
-              {/* Product Info */}
-              <div className="flex items-center gap-4 w-full sm:w-auto">
-                <div className="w-20 h-20 bg-zinc-800 rounded-lg overflow-hidden p-2">
-                   <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+        <div className="grid md:grid-cols-5 gap-6">
+
+          {/* ── Cart items ── */}
+          <div className="md:col-span-3 bg-zinc-900/50 border border-zinc-800 rounded-2xl overflow-hidden p-6">
+            {cartItems.map((item) => (
+              <div key={item.id} className="flex flex-col sm:flex-row items-center justify-between border-b border-zinc-800 py-6 last:border-0 gap-4">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <div className="w-20 h-20 bg-zinc-800 rounded-lg overflow-hidden p-2">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">{item.name}</h3>
+                    <p className="text-purple-400">₹{item.price.toString().replace(/[^0-9.]/g, '')}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold">{item.name}</h3>
-                  {/* CHANGE 1: Force Rupee Symbol on individual items */}
-                  {/* We strip existing symbols just in case, then add ₹ */}
-                  <p className="text-purple-400">
-                    ₹{item.price.toString().replace(/[^0-9.]/g, '')}
-                  </p>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center bg-black border border-zinc-700 rounded-lg">
+                    <button onClick={() => decreaseQuantity(item.id)} className="p-2 hover:text-purple-500"><Minus size={16}/></button>
+                    <span className="w-8 text-center font-bold">{item.quantity}</span>
+                    <button onClick={() => addToCart(item)} className="p-2 hover:text-purple-500"><Plus size={16}/></button>
+                  </div>
+                  <button onClick={() => removeFromCart(item.id)} className="text-gray-500 hover:text-red-500 transition-colors">
+                    <Trash2 size={20} />
+                  </button>
                 </div>
               </div>
-
-              {/* Controls */}
-              <div className="flex items-center gap-6">
-                
-                {/* Counter */}
-                <div className="flex items-center bg-black border border-zinc-700 rounded-lg">
-                  <button onClick={() => decreaseQuantity(item.id)} className="p-2 hover:text-purple-500"><Minus size={16}/></button>
-                  <span className="w-8 text-center font-bold">{item.quantity}</span>
-                  <button onClick={() => addToCart(item)} className="p-2 hover:text-purple-500"><Plus size={16}/></button>
-                </div>
-
-                {/* Delete */}
-                <button onClick={() => removeFromCart(item.id)} className="text-gray-500 hover:text-red-500 transition-colors">
-                  <Trash2 size={20} />
-                </button>
-              </div>
-            </div>
-          ))}
-
-          {/* TOTAL & CHECKOUT */}
-          <div className="mt-8 flex flex-col items-end border-t border-zinc-800 pt-8">
-            <div className="flex justify-between w-full sm:w-64 text-xl font-bold mb-6">
-              <span>Total:</span>
-              {/* CHANGE 2: Replaced '$' with '₹' and .toFixed(2) with .toLocaleString('en-IN') */}
-              <span>₹{totalPrice.toLocaleString('en-IN')}</span>
-            </div>
-            
-            <button className="bg-white text-black font-bold px-8 py-4 rounded-full hover:bg-gray-200 flex items-center gap-2 w-full sm:w-auto justify-center">
-              Proceed to Checkout <ArrowRight size={20} />
-            </button>
+            ))}
           </div>
 
+          {/* ── Order summary sidebar ── */}
+          <div className="md:col-span-2 flex flex-col gap-4">
+
+            {/* Coupon code */}
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5">
+              <h3 className="text-white font-bold flex items-center gap-2 mb-3">
+                <Tag size={15} className="text-yellow-400" /> Coupon Code
+              </h3>
+
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between bg-green-500/10 border border-green-500/20 rounded-xl px-3 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={15} className="text-green-400 shrink-0" />
+                    <div>
+                      <p className="text-green-300 font-bold text-sm">{appliedCoupon}</p>
+                      <p className="text-green-400/70 text-xs">{COUPONS[appliedCoupon]?.label}</p>
+                    </div>
+                  </div>
+                  <button onClick={removeCoupon} className="text-zinc-500 hover:text-red-400 transition-colors">
+                    <X size={15} />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={e => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
+                      onKeyDown={e => e.key === 'Enter' && applyCoupon()}
+                      placeholder="Enter code"
+                      className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors uppercase tracking-wider"
+                    />
+                    <button
+                      onClick={applyCoupon}
+                      className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-2 rounded-xl text-sm transition-colors"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {couponError && (
+                    <p className="text-red-400 text-xs mt-1.5">{couponError}</p>
+                  )}
+                  <p className="text-zinc-600 text-xs mt-2">Try: WELCOME10 · SAVE20 · FLAT500</p>
+                </>
+              )}
+            </div>
+
+            {/* Price breakdown */}
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5">
+              <h3 className="text-white font-bold mb-4">Order Summary</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between text-zinc-400">
+                  <span>Subtotal ({cartItems.length} item{cartItems.length !== 1 ? 's' : ''})</span>
+                  <span>₹{subtotal.toLocaleString('en-IN')}</span>
+                </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-green-400 font-medium">
+                    <span>Discount ({appliedCoupon})</span>
+                    <span>− ₹{discount.toLocaleString('en-IN')}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-zinc-400">
+                  <span>Shipping</span>
+                  <span className="text-green-400">Free</span>
+                </div>
+                <div className="border-t border-zinc-800 pt-3 mt-3 flex justify-between text-white font-black text-lg">
+                  <span>Total</span>
+                  <span>₹{finalTotal.toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleCheckout}
+                disabled={placing}
+                className="mt-5 w-full bg-white text-black font-bold px-8 py-4 rounded-full hover:bg-gray-200 flex items-center justify-center gap-2 transition-colors disabled:opacity-60"
+              >
+                {placing
+                  ? <><Loader2 size={18} className="animate-spin" /> Redirecting to CCAvenue...</>
+                  : <>Pay with CCAvenue <ArrowRight size={18} /></>}
+              </button>
+              <p className="text-zinc-600 text-xs text-center mt-3">🔒 Secured by CCAvenue · 256-bit SSL</p>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>

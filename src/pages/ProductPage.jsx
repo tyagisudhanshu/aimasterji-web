@@ -1,13 +1,17 @@
 import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // <--- Changed Link to useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Zap, Check, Shield, Cpu, MessageCircle } from 'lucide-react';
 import { products } from '../data/products'; 
 import toast from 'react-hot-toast';
 import Reviews from '../components/Reviews';
+import ProductRatings from '../components/ProductRatings';
+import { useCart } from '../context/CartContext';
 
 export default function ProductPage() {
   const { id } = useParams();
-  const navigate = useNavigate(); // <--- This tool controls history
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+
   const handleWhatsAppQuery = () => {
   const phoneNumber = "919310297919"; // Replace with your actual number
   const message = `Hi! I'm interested in buying ${product.name} (Price: ${product.price}). Can you provide more details about its features for a 3-year-old?`;
@@ -111,7 +115,9 @@ export default function ProductPage() {
               <button className="flex-1 bg-white text-black font-bold py-4 rounded-full hover:bg-gray-200 transition-transform hover:scale-105 flex items-center justify-center gap-2">
                 <Zap size={20} /> Buy Now
               </button>
-              <button className="flex-1 bg-zinc-900 border border-zinc-700 text-white font-bold py-4 rounded-full hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2">
+              <button
+                onClick={() => { addToCart(product); toast.success(`${product.name} added to cart!`); }}
+                className="flex-1 bg-zinc-900 border border-zinc-700 text-white font-bold py-4 rounded-full hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2">
                 <ShoppingCart size={20} /> Add to Cart
               </button>
               {/* NEW: WhatsApp Query Button */}
@@ -129,6 +135,7 @@ export default function ProductPage() {
         </div>
       </div>
       <Reviews />
+      <ProductRatings productId={product.id} productName={product.name} />
     </div>
   );
 }

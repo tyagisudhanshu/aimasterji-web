@@ -1,11 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, X, User, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Menu, X, User, ChevronDown, LogOut, LayoutDashboard, ClipboardList, UserCircle, ShieldCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
-export default function Navbar({ user }) {
+export default function Navbar() {
   const context = useCart();
-  const cart = context.cart || context.cartItems || []; 
+  const cart = context.cart || context.cartItems || [];
+  const { user, logOut } = useAuth();
+  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+  const isAdmin = user && ADMIN_EMAIL && user.email === ADMIN_EMAIL;
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  async function handleLogout() {
+    await logOut();
+    toast.success('Signed out successfully.');
+    setDropdownOpen(false);
+    navigate('/');
+  }
   
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -71,7 +96,11 @@ export default function Navbar({ user }) {
         {/* LINKS SECTION */}
         <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-300">
            
-           <Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors">Home</Link>
+           {user ? (
+             <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors">Dashboard</Link>
+           ) : (
+             <Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors">Home</Link>
+           )}
            
            {/* PRODUCT DROPDOWN */}
            <div className="relative group">
@@ -127,9 +156,65 @@ export default function Navbar({ user }) {
           </Link>
 
           {user ? (
-             <Link to="/dashboard" className="hidden sm:flex items-center gap-2 px-4 py-2 text-white font-bold">
-                <User size={18} />
-             </Link>
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 transition-colors"
+              >
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-white text-[10px] font-bold">
+                    {(user.displayName || user.email || 'U')[0].toUpperCase()}
+                  </div>
+                )}
+                <span className="hidden sm:inline text-white text-xs font-semibold max-w-[80px] truncate">
+                  {user.displayName || user.email.split('@')[0]}
+                </span>
+                <ChevronDown size={12} className={`text-zinc-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden z-50">
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-zinc-800 transition-colors"
+                  >
+                    <LayoutDashboard size={15} className="text-purple-400" /> Dashboard
+                  </Link>
+                  <Link
+                    to="/orders"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-zinc-800 transition-colors border-t border-zinc-800"
+                  >
+                    <ClipboardList size={15} className="text-blue-400" /> Order History
+                  </Link>
+                  <Link
+                    to="/profile"
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-zinc-800 transition-colors border-t border-zinc-800"
+                  >
+                    <UserCircle size={15} className="text-pink-400" /> My Profile
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-zinc-800 transition-colors border-t border-zinc-800"
+                    >
+                      <ShieldCheck size={15} className="text-orange-400" /> Admin Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-zinc-800 transition-colors border-t border-zinc-800"
+                  >
+                    <LogOut size={15} /> Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
              <button onClick={handleAuth} className="hidden sm:flex items-center gap-2 border border-red-500/50 hover:border-red-500 hover:bg-red-500/10 text-red-500 px-4 py-2 md:px-5 md:py-2.5 rounded-full text-xs font-bold transition-colors">
                 <User size={14} />
@@ -146,7 +231,11 @@ export default function Navbar({ user }) {
        {/* MOBILE MENU */}
        {isMobileMenuOpen && (
         <div className="md:hidden bg-zinc-950 border-t border-zinc-800 absolute top-full mt-4 w-[99%] rounded-2xl p-6 flex flex-col gap-6 text-zinc-300 shadow-2xl">
-          <Link to="/" onClick={scrollToTop} className="text-xl font-bold text-white">Home</Link>
+          {user ? (
+            <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-purple-400">Dashboard</Link>
+          ) : (
+            <Link to="/" onClick={scrollToTop} className="text-xl font-bold text-white">Home</Link>
+          )}
           <Link to="/sale" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-red-500">Sale 🔥</Link>
           <Link to="/support" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-white">Support</Link>
           
@@ -158,6 +247,35 @@ export default function Navbar({ user }) {
           </div>
 
           <button onClick={handleFaqClick} className="text-xl text-left text-zinc-300">FAQ</button>
+
+          {user ? (
+            <>
+              <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-purple-400 flex items-center gap-2">
+                <LayoutDashboard size={20} /> Dashboard
+              </Link>
+              <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-blue-400 flex items-center gap-2">
+                <ClipboardList size={20} /> Order History
+              </Link>
+              <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-pink-400 flex items-center gap-2">
+                <UserCircle size={20} /> My Profile
+              </Link>
+              {isAdmin && (
+                <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-orange-400 flex items-center gap-2">
+                  <ShieldCheck size={20} /> Admin Panel
+                </Link>
+              )}
+              <button
+                onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                className="text-xl font-bold text-red-400 flex items-center gap-2 text-left"
+              >
+                <LogOut size={20} /> Sign Out
+              </button>
+            </>
+          ) : (
+            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-white flex items-center gap-2">
+              <User size={20} /> Sign In
+            </Link>
+          )}
         </div>
       )}
     </nav>

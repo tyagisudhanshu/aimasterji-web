@@ -1,9 +1,24 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const CartContext = createContext();
 
+const STORAGE_KEY = 'aimasterji_cart';
+
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  // Load from localStorage on first render
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Save to localStorage whenever cart changes
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // 1. ADD ITEM (or Increase)
   const addToCart = (product) => {
@@ -40,8 +55,11 @@ export function CartProvider({ children }) {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
+  // 4. CLEAR ENTIRE CART (after order placed)
+  const clearCart = () => setCartItems([]);
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, decreaseQuantity, removeFromCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, decreaseQuantity, removeFromCart, clearCart }}>
       {children}
     </CartContext.Provider>
   );
