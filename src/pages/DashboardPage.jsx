@@ -82,8 +82,11 @@ export default function DashboardPage() {
   async function handleResendVerification() {
     setResending(true);
     try {
-      await sendEmailVerification(auth.currentUser);
-      toast.success('Verification email sent! Check your inbox.');
+      const actionCodeSettings = {
+        url: `${import.meta.env.VITE_SITE_URL || 'https://aimasterji.professorsai.org'}/dashboard`,
+      };
+      await sendEmailVerification(auth.currentUser, actionCodeSettings);
+      toast.success('Verification email sent! Check your inbox (and spam folder).');
     } catch {
       toast.error('Could not send email. Please wait a moment and try again.');
     } finally {

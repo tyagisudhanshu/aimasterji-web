@@ -112,7 +112,19 @@ export default function ProductPage() {
 
             {/* ACTION BUTTONS */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="flex-1 bg-white text-black font-bold py-4 rounded-full hover:bg-gray-200 transition-transform hover:scale-105 flex items-center justify-center gap-2">
+              <button
+                onClick={() => navigate('/checkout', {
+                  state: {
+                    buyNowItem: {
+                      id:       product.id,
+                      name:     product.name,
+                      price:    product.price,
+                      quantity: 1,
+                      image:    product.image || '',
+                    },
+                  },
+                })}
+                className="flex-1 bg-white text-black font-bold py-4 rounded-full hover:bg-gray-200 transition-transform hover:scale-105 flex items-center justify-center gap-2">
                 <Zap size={20} /> Buy Now
               </button>
               <button

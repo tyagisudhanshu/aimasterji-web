@@ -40,7 +40,11 @@ export function AuthProvider({ children }) {
     if (displayName) {
       await updateProfile(result.user, { displayName });
     }
-    await sendEmailVerification(result.user);
+    // actionCodeSettings makes the verification link redirect back to the app
+    const actionCodeSettings = {
+      url: `${import.meta.env.VITE_SITE_URL || 'https://aimasterji.professorsai.org'}/dashboard`,
+    };
+    await sendEmailVerification(result.user, actionCodeSettings);
     return result;
   }
 

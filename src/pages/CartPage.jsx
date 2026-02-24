@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, Plus, Minus, ArrowRight, Tag, X, CheckCircle2, Loader2 } from 'lucide-react';
+import { Trash2, Plus, Minus, ArrowRight, Tag, X, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { sendOrderEmail } from '../utils/notifications';
-import { db } from '../firebase';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 
 // ── Valid coupon codes ───────────────────────────────────────────────────────
@@ -32,7 +29,6 @@ export default function CartPage() {
   const [couponInput, setCouponInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState('');
   const [couponError, setCouponError]     = useState('');
-  const [placing, setPlacing] = useState(false);
 
   const subtotal = cartItems.reduce((total, item) => {
     const price = parseFloat(item.price.toString().replace(/[^0-9.]/g, ''));
@@ -61,106 +57,21 @@ export default function CartPage() {
     setCouponInput('');
   }
 
-  async function handleCheckout() {
+  function handleCheckout() {
     if (!user) {
       toast.error('Please sign in to place an order.');
       navigate('/login');
       return;
     }
-    setPlacing(true);
-    try {
-      // 1. Generate order ID
-      const orderId = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-      const customerName  = user.displayName || user.email.split('@')[0];
-      const customerEmail = user.email;
-
-      const orderData = {
-        orderId,
-        userId: user.uid,
-        customerName,
-        customerEmail,
-        items: cartItems.map(i => ({
-          id: i.id,
-          name: i.name,
-          price: i.price,
-          quantity: i.quantity,
-          image: i.image || '',
-        })),
+    
+    // Navigate to checkout with order summary data
+    navigate('/checkout', {
+      state: {
         subtotal,
-        coupon: appliedCoupon || null,
         discount,
-        total: finalTotal,
-        status: 'pending',
-        createdAt: serverTimestamp(),
-      };
-
-      // 2. Save to Firestore (top-level + user subcollection)
-      await setDoc(doc(db, 'orders', orderId), orderData);
-      await setDoc(doc(db, 'users', user.uid, 'orders', orderId), orderData);
-
-      // 3. Email confirmation to customer (WhatsApp sent on payment success page)
-      await sendOrderEmail({ user, cartItems, subtotal, coupon: appliedCoupon, discount, finalTotal })
-        .catch(() => {});
-
-      // 5. Call backend to get CCAvenue encrypted form data
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
-      let payData = null;
-
-      try {
-        const payRes = await fetch(`${backendUrl}/api/payment/initiate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderId,
-            amount: finalTotal,
-            customerName,
-            customerEmail,
-          }),
-        });
-
-        if (payRes.ok) {
-          payData = await payRes.json();
-        } else {
-          const errBody = await payRes.json().catch(() => ({}));
-          console.warn('CCAvenue backend error:', payRes.status, errBody);
-        }
-      } catch (networkErr) {
-        console.warn('Backend unreachable:', networkErr.message);
-      }
-
-      // 6. Clear cart
-      clearCart();
-
-      // 7a. If CCAvenue data available — redirect to payment page
-      if (payData?.encRequest && payData?.access_code) {
-        const form  = document.createElement('form');
-        form.method = 'post';
-        form.action = payData.ccavenue_url;
-
-        const addField = (name, value) => {
-          const input = document.createElement('input');
-          input.type  = 'hidden';
-          input.name  = name;
-          input.value = value;
-          form.appendChild(input);
-        };
-        addField('encRequest',  payData.encRequest);
-        addField('access_code', payData.access_code);
-        document.body.appendChild(form);
-        form.submit(); // navigates away — no setPlacing needed
-        return;
-      }
-
-      // 7b. Fallback — backend down or credentials missing
-      toast.success('Order placed! We will contact you to complete payment.');
-      navigate('/orders');
-
-    } catch (err) {
-      console.error('Checkout error:', err);
-      toast.error(`Checkout failed: ${err.message || 'Unknown error'}`);
-    } finally {
-      setPlacing(false);
-    }
+        coupon: appliedCoupon,
+      },
+    });
   }
 
   if (cartItems.length === 0) {
@@ -283,12 +194,9 @@ export default function CartPage() {
 
               <button
                 onClick={handleCheckout}
-                disabled={placing}
-                className="mt-5 w-full bg-white text-black font-bold px-8 py-4 rounded-full hover:bg-gray-200 flex items-center justify-center gap-2 transition-colors disabled:opacity-60"
+                className="mt-5 w-full bg-white text-black font-bold px-8 py-4 rounded-full hover:bg-gray-200 flex items-center justify-center gap-2 transition-colors"
               >
-                {placing
-                  ? <><Loader2 size={18} className="animate-spin" /> Redirecting to CCAvenue...</>
-                  : <>Pay with CCAvenue <ArrowRight size={18} /></>}
+                Proceed to Checkout <ArrowRight size={18} />
               </button>
               <p className="text-zinc-600 text-xs text-center mt-3">🔒 Secured by CCAvenue · 256-bit SSL</p>
             </div>

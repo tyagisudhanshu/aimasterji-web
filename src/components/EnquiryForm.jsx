@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Send, Mail, User, MessageSquare } from 'lucide-react';
+import { Send, Mail, User, MessageSquare, Loader2 } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+import toast from 'react-hot-toast';
 
 export default function EnquiryForm() {
   const [formData, setFormData] = useState({
@@ -8,12 +10,44 @@ export default function EnquiryForm() {
     interest: 'General Enquiry',
     message: ''
   });
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Later we can connect this to email or backend
-    alert(`Thanks ${formData.name}! We will contact you at ${formData.email} shortly.`);
-    setFormData({ name: '', email: '', interest: 'General Enquiry', message: '' });
+    setSending(true);
+
+    try {
+      const SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ENQUIRY;
+      const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+      if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+        toast.error('Email service not configured. Please contact support.');
+        setSending(false);
+        return;
+      }
+
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          interest: formData.interest,
+          message: formData.message,
+          to_email: 'ai.masterji@aalgorix.com', // admin email
+        },
+        PUBLIC_KEY
+      );
+
+      toast.success(`Thanks ${formData.name}! We’ll get back to you soon.`);
+      setFormData({ name: '', email: '', interest: 'General Enquiry', message: '' });
+    } catch (err) {
+      console.error('Enquiry email error:', err);
+      toast.error('Failed to send enquiry. Please email us directly.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -43,7 +77,7 @@ export default function EnquiryForm() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wider">Email Us</p>
-                  <p className="font-medium">hello@aimasterji.com</p>
+                  <p className="font-medium">ai.masterji@aalgorix.com</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-gray-300">
@@ -120,8 +154,12 @@ export default function EnquiryForm() {
                 ></textarea>
               </div>
 
-              <button type="submit" className="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-transform hover:scale-[1.02] flex items-center justify-center gap-2">
-                Send Enquiry <Send size={18} />
+              <button type="submit" disabled={sending} className="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-transform hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                {sending ? (
+                  <><Loader2 size={18} className="animate-spin" /> Sending...</>
+                ) : (
+                  <>Send Enquiry <Send size={18} /></>
+                )}
               </button>
 
             </form>
