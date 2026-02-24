@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestore';
 
 // ── Status badge config ──────────────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -160,15 +160,18 @@ export default function OrderHistoryPage() {
 
   useEffect(() => {
     if (!user) return;
-    const ref = collection(db, 'users', user.uid, 'orders');
-    const q   = query(ref, orderBy('createdAt', 'desc'));
-    // onSnapshot gives real-time updates — whenever admin changes status,
-    // user sees it instantly without refreshing
+    // Read from top-level `orders` collection — this is what admin updates.
+    // Reading from users/{uid}/orders would miss admin updates due to Firestore rules.
+    const q = query(
+      collection(db, 'orders'),
+      where('userId', '==', user.uid),
+      orderBy('createdAt', 'desc')
+    );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setOrders(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
       setFetching(false);
     }, () => setFetching(false));
-    return unsubscribe; // cleanup listener on unmount
+    return unsubscribe;
   }, [user]);
 
   if (isLoading) return (
