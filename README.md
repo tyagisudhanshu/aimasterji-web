@@ -10,17 +10,6 @@
 [![Customizable](https://img.shields.io/badge/Fully-Customizable-blue?style=for-the-badge)](#)
 [![Safe & Secure](https://img.shields.io/badge/100%25-Secure-orange?style=for-the-badge)](#)
 
-```
-    _____ _____   __  __           _            _ _ 
-   /  _  \_   _| |  \/  |         | |          (_|_)
-  / /_\  \| |   | .  . | __ _ ___| |_ ___ _ __ _ _ 
- / /_\\  \ | |  | |\/| |/ _` / __| __/ _ \ '__| | |
-/  ___  \_| |_ | |  | | (_| \__ \ ||  __/ |  | | |
-\_/   \_/\___/ \_|  |_/\__,_|___/\__\___|_|  | |_|
-                                             _/ |  
-                                            |__/   
-```
-
 </div>
 
 ---
