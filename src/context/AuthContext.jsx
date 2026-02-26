@@ -14,6 +14,8 @@ import {
   updateProfile,
   sendPasswordResetEmail,
   sendEmailVerification,
+  GoogleAuthProvider,
+  linkWithCredential,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 
@@ -53,9 +55,24 @@ export function AuthProvider({ children }) {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
-  /** Sign in with Google popup */
-  function googleSignIn() {
-    return signInWithPopup(auth, googleProvider);
+  /** Sign in with Google popup.
+   * If the email already has a password account, throws the error with
+   * `pendingCredential` attached so LoginPage can do account linking.
+   */
+  async function googleSignIn() {
+    try {
+      return await signInWithPopup(auth, googleProvider);
+    } catch (err) {
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        err.pendingCredential = GoogleAuthProvider.credentialFromError(err);
+      }
+      throw err;
+    }
+  }
+
+  /** Link a pending Google credential to the currently signed-in user */
+  async function linkGoogleCredential(pendingCredential) {
+    return linkWithCredential(auth.currentUser, pendingCredential);
   }
 
   /** Sign out */
@@ -69,7 +86,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, signUp, signIn, googleSignIn, logOut, resetPassword }}>
+    <AuthContext.Provider value={{ user, isLoading, signUp, signIn, googleSignIn, linkGoogleCredential, logOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

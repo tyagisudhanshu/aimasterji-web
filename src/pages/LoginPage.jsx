@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Loader2, Mail, Lock, Chrome, AlertCircle } from 'lucide-react';
+import { Loader2, Mail, Lock, Chrome, AlertCircle, Link2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
-  const { signIn, googleSignIn } = useAuth();
+  const { signIn, googleSignIn, linkGoogleCredential } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   // If the user was sent here from a protected page, go back there after login
@@ -16,7 +16,9 @@ export default function LoginPage() {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading]   = useState(false);
-  const [errorMsg, setErrorMsg] = useState(''); // inline error under the form
+  const [errorMsg, setErrorMsg] = useState('');
+  // Stored when Google detects an existing email/password account
+  const [pendingGoogleCred, setPendingGoogleCred] = useState(null);
 
   // ── Email / Password Login ──────────────────────────────────────────────────
   async function handleEmailLogin(e) {
@@ -25,12 +27,26 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await signIn(email, password);
-      toast.success('Welcome back!');
-      navigate('/dashboard');
+
+      // If Google sign-in was attempted before and left a pending credential,
+      // link it now so the user can use both methods going forward.
+      if (pendingGoogleCred) {
+        try {
+          await linkGoogleCredential(pendingGoogleCred);
+          toast.success('Google account linked! You can now use both sign-in methods.');
+        } catch {
+          // Already linked or minor error — not critical
+        }
+        setPendingGoogleCred(null);
+      } else {
+        toast.success('Welcome back!');
+      }
+
+      navigate(from, { replace: true });
     } catch (err) {
       const { message, isGoogleHint } = friendlyError(err.code);
       if (isGoogleHint) {
-        setErrorMsg(message); // show inline hint with Google suggestion
+        setErrorMsg(message);
       } else {
         toast.error(message);
       }
@@ -48,7 +64,16 @@ export default function LoginPage() {
       toast.success('Welcome back!');
       navigate(from, { replace: true });
     } catch (err) {
-      if (err.code !== 'auth/popup-closed-by-user') {
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        // An email/password account already exists for this email.
+        // Store the pending Google credential and guide the user to sign in
+        // with their password — we'll link both accounts automatically after.
+        setPendingGoogleCred(err.pendingCredential);
+        setEmail(err.customData?.email || '');
+        setErrorMsg(
+          'This email already has a password account. Enter your password below to sign in and automatically link your Google account.'
+        );
+      } else if (err.code !== 'auth/popup-closed-by-user') {
         toast.error(friendlyError(err.code).message);
       }
     } finally {
@@ -90,11 +115,20 @@ export default function LoginPage() {
           <div className="flex-1 h-px bg-zinc-800" />
         </div>
 
-        {/* Inline error banner */}
+        {/* Inline error / link-accounts banner */}
         {errorMsg && (
-          <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">
-            <AlertCircle size={15} className="text-red-400 mt-0.5 shrink-0" />
-            <p className="text-red-300 text-xs leading-relaxed">{errorMsg}</p>
+          <div className={`flex items-start gap-3 rounded-xl px-4 py-3 mb-4 border ${
+            pendingGoogleCred
+              ? 'bg-blue-500/10 border-blue-500/20'
+              : 'bg-red-500/10 border-red-500/20'
+          }`}>
+            {pendingGoogleCred
+              ? <Link2 size={15} className="text-blue-400 mt-0.5 shrink-0" />
+              : <AlertCircle size={15} className="text-red-400 mt-0.5 shrink-0" />
+            }
+            <p className={`text-xs leading-relaxed ${pendingGoogleCred ? 'text-blue-300' : 'text-red-300'}`}>
+              {errorMsg}
+            </p>
           </div>
         )}
 
@@ -136,7 +170,10 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-60"
           >
-            {loading ? <Loader2 size={18} className="animate-spin" /> : 'Sign In'}
+            {loading
+              ? <Loader2 size={18} className="animate-spin" />
+              : pendingGoogleCred ? 'Sign In & Link Google Account' : 'Sign In'
+            }
           </button>
         </form>
 
