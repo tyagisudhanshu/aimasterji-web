@@ -74,7 +74,12 @@ export default function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/privacy" element={<Legal />} />
+            <Route path="/privacy-policy" element={<Legal />} />
             <Route path="/terms" element={<Legal />} />
+            <Route path="/terms-and-conditions" element={<Legal />} />
+            <Route path="/refund-policy" element={<Legal />} />
+            <Route path="/return-policy" element={<Legal />} />
+            <Route path="/shipping-policy" element={<Legal />} />
             <Route path="/sale" element={<SalePage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/try-it-out" element={<AILab />} />

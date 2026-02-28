@@ -1,102 +1,255 @@
-import React from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+const tabs = [
+  { id: 'terms', label: 'Terms & Conditions' },
+  { id: 'privacy', label: 'Privacy Policy' },
+  { id: 'refund', label: 'Refund & Cancellation' },
+  { id: 'return', label: 'Return Policy' },
+  { id: 'shipping', label: 'Shipping Policy' },
+];
+
+// Map URL paths to tab IDs
+const PATH_TAB_MAP = {
+  '/terms-and-conditions': 'terms',
+  '/terms': 'terms',
+  '/privacy-policy': 'privacy',
+  '/privacy': 'privacy',
+  '/refund-policy': 'refund',
+  '/refund': 'refund',
+  '/return-policy': 'return',
+  '/return': 'return',
+  '/shipping-policy': 'shipping',
+  '/shipping': 'shipping',
+};
 
 export default function Legal() {
+  const location = useLocation();
+  const defaultTab = PATH_TAB_MAP[location.pathname] || 'terms';
+  const [activeTab, setActiveTab] = useState(defaultTab);
+
+  useEffect(() => {
+    const tab = PATH_TAB_MAP[location.pathname];
+    if (tab) setActiveTab(tab);
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
     <div className="min-h-screen bg-black text-white pt-32 pb-20 px-6">
       <div className="container mx-auto max-w-4xl">
-        
-        <h1 className="text-4xl font-bold mb-4 text-purple-500">Privacy Policy</h1>
-        <p className="text-zinc-500 mb-12">Last Modified: January 24, 2026</p>
-        
-        <div className="space-y-8 text-gray-300 leading-relaxed font-light text-sm md:text-base">
 
-          {/* SECTION 1 */}
-          <section>
-            <h2 className="text-xl font-bold text-white mb-4">1. Introduction</h2>
-            <p className="mb-4">
-              AiMasterji (a division of ProfessorsAI, or "We") respects your privacy and we are committed to protecting it through our compliance with this policy. This policy describes:
-            </p>
-            <ul className="list-disc pl-5 space-y-2 text-zinc-400">
-              <li>The types of information we may collect or that you may provide when you download, install, register with, access, or use the AiMasterji App (the “App”).</li>
-              <li>The types of information we may collect or that you may provide when you purchase or use the AiMasterji Robots (Mimi, Simba, Prince) or their successors (individually and collectively, the “Device”).</li>
-              <li>The types of information that we may collect or that you may provide when you visit the website (aimasterji.professorsai.org) (our “Website”).</li>
-              <li>Our practices for collecting, using, maintaining, protecting, and disclosing that information.</li>
-            </ul>
-            <p className="mt-4">
-              Please read this policy carefully to understand our policies and practices regarding your information and how we will treat it. If you do not agree with our policies and practices, do not use the Website, App, or Device.
-            </p>
-          </section>
+        <h1 className="text-4xl font-bold mb-2 text-purple-400">Legal</h1>
+        <p className="text-zinc-500 mb-10 text-sm">AI Masterji Â· aimasterji.professorsai.org</p>
 
-          {/* SECTION 2 */}
-          <section>
-            <h2 className="text-xl font-bold text-white mb-4">2. Use of App by Minors Under the Age of 18</h2>
-            <p>
-              The Website and the App are not intended for minors under the age of 18. The Website and App are intended for adult parents of children to purchase and set up the Device. We do not knowingly collect personal information from minors under 18 via the Website or the App directly. We do collect personal information about children *from their parents* via the Website or the App.
-            </p>
-          </section>
+        {/* Tab Bar */}
+        <div className="flex flex-wrap gap-2 mb-10 border-b border-zinc-800 pb-4">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                activeTab === tab.id
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          {/* SECTION 3 - COPPA */}
-          <section>
-            <h2 className="text-xl font-bold text-white mb-4">3. Children Under the Age of 13</h2>
-            <div className="bg-zinc-900/50 p-6 rounded-xl border border-zinc-800">
-              <p className="mb-4 text-white font-medium">
-                The Children’s Online Privacy Protection Act (COPPA) requires us to inform parents about our practices for collecting, using, and disclosing personal information from children under 13.
-              </p>
-              
-              <h3 className="text-white font-bold mt-6 mb-2">A. Information We Collect</h3>
-              <p className="mb-4">
-                Children can interact with the Device (Mimi/Simba/Prince) using their voice. This results in the temporary collection of a voice audio file. We use this audio solely to generate a text transcription to power the interaction. 
-                <span className="block mt-2 text-purple-400">
-                  After transcribing the audio to text, we promptly delete the associated audio files.
-                </span>
-                The transcription is retained for up to 90 days to allow parents to monitor interactions, after which it is automatically deleted.
-              </p>
+        <div className="text-gray-300 leading-relaxed text-sm md:text-base space-y-8">
 
-              <h3 className="text-white font-bold mt-6 mb-2">B. How We Use Child’s Information</h3>
-              <p className="mb-4">
-                We use the information to allow the Device to have a natural, educational conversation with the child. We may pass text data to a third-party AI language model to generate responses. These third parties do not retain information for training purposes.
-              </p>
-
-              <h3 className="text-white font-bold mt-6 mb-2">C. Disclosure</h3>
+          {/* â”€â”€ TERMS & CONDITIONS â”€â”€ */}
+          {activeTab === 'terms' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white">Terms &amp; Conditions</h2>
               <p>
-                We do not sell, rent, or transfer children’s personal information. We only disclose it to service providers (like ElevenLabs or OpenAI) strictly to support the internal operations of the Device.
+                This document is an electronic record in terms of Information Technology Act, 2000 and rules thereunder as applicable and the amended provisions pertaining to electronic records in various statutes as amended by the Information Technology Act, 2000. This electronic record is generated by a computer system and does not require any physical or digital signatures.
               </p>
+              <p>
+                This document is published in accordance with the provisions of Rule 3(1) of the Information Technology (Intermediaries guidelines) Rules, 2011 that require publishing the rules and regulations, privacy policy and Terms of Use for access or usage of domain name <a href="https://aimasterji.professorsai.org/" className="text-purple-400 underline">https://aimasterji.professorsai.org/</a> ('Website'), including the related mobile site and mobile application (hereinafter referred to as 'Platform').
+              </p>
+              <p>
+                The Platform is owned by <strong className="text-white">AI Masterji</strong>, a company incorporated under the Companies Act, 1956 with its registered office at Rohit Verma, Tower A 4th Floor Business Vision Park, Knowledge Park 3, Greater Noida - 201310 (hereinafter referred to as 'Platform Owner', 'we', 'us', 'our').
+              </p>
+              <p>
+                Your use of the Platform and services and tools are governed by the following terms and conditions ("Terms of Use") as applicable to the Platform including the applicable policies which are incorporated herein by way of reference. If You transact on the Platform, You shall be subject to the policies that are applicable to the Platform for such transaction. By mere use of the Platform, You shall be contracting with the Platform Owner and these terms and conditions including the policies constitute Your binding obligations with Platform Owner.
+              </p>
+              <p>
+                These Terms of Use relate to your use of our website, goods (as applicable) or services (as applicable) (collectively, 'Services'). Any terms and conditions proposed by You which are in addition to or which conflict with these Terms of Use are expressly rejected by the Platform Owner and shall be of no force or effect. These Terms of Use can be modified at any time without assigning any reason. It is your responsibility to periodically review these Terms of Use to stay informed of updates.
+              </p>
+              <p className="uppercase font-bold text-white text-xs tracking-widest bg-zinc-900 border border-zinc-700 rounded-lg p-4">
+                ACCESSING, BROWSING OR OTHERWISE USING THE PLATFORM INDICATES YOUR AGREEMENT TO ALL THE TERMS AND CONDITIONS UNDER THESE TERMS OF USE, SO PLEASE READ THE TERMS OF USE CAREFULLY BEFORE PROCEEDING.
+              </p>
+              <div className="space-y-4">
+                <h3 className="text-white font-bold text-lg">Terms of Use</h3>
+                <ul className="list-disc pl-6 space-y-3 text-zinc-400">
+                  <li>To access and use the Services, you agree to provide true, accurate and complete information to us during and after registration, and you shall be responsible for all acts done through the use of your registered account on the Platform.</li>
+                  <li>Neither we nor any third parties provide any warranty or guarantee as to the accuracy, timeliness, performance, completeness or suitability of the information and materials offered on this website or through the Services, for any specific purpose. You acknowledge that such information and materials may contain inaccuracies or errors and we expressly exclude liability for any such inaccuracies or errors to the fullest extent permitted by law.</li>
+                  <li>Your use of our Services and the Platform is solely and entirely at your own risk and discretion for which we shall not be liable to you in any manner. You are required to independently assess and ensure that the Services meet your requirements.</li>
+                  <li>The contents of the Platform and the Services are proprietary to us and licensed to us. You will not have any authority to claim any intellectual property rights, title, or interest in its contents.</li>
+                  <li>You acknowledge that unauthorized use of the Platform and/or the Services may lead to action against you as per these Terms of Use and/or applicable laws.</li>
+                  <li>You agree to pay us the charges associated with availing the Services.</li>
+                  <li>You agree not to use the Platform and/or Services for any purpose that is unlawful, illegal or forbidden by these Terms, or Indian or local laws that might apply to you.</li>
+                  <li>You agree and acknowledge that the website and the Services may contain links to other third-party websites. On accessing these links, you will be governed by the terms of use, privacy policy and such other policies of such third-party websites.</li>
+                  <li>You understand that upon initiating a transaction for availing the Services you are entering into a legally binding and enforceable contract with the Platform Owner for the Services.</li>
+                  <li>You shall indemnify and hold harmless Platform Owner, its affiliates, group companies and their respective officers, directors, agents, and employees from any claim or demand, or actions including reasonable attorney's fees, made by any third party or penalty imposed due to or arising out of Your breach of these Terms of Use, privacy Policy and other Policies, or Your violation of any law, rules or regulations or the rights of a third party.</li>
+                  <li>Notwithstanding anything contained in these Terms of Use, the parties shall not be liable for any failure to perform an obligation under these Terms if performance is prevented or delayed by a force majeure event.</li>
+                </ul>
+              </div>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-2">
+                <p><span className="text-white font-semibold">Governing Law:</span> These Terms and any dispute or claim relating to it shall be governed by and construed in accordance with the laws of India.</p>
+                <p><span className="text-white font-semibold">Jurisdiction:</span> All disputes arising out of or in connection with these Terms shall be subject to the exclusive jurisdiction of the courts in India.</p>
+                <p><span className="text-white font-semibold">Contact:</span> All concerns or communications relating to these Terms must be communicated to us using the contact information provided on this website.</p>
+              </div>
             </div>
-          </section>
+          )}
 
-          {/* SECTION 4 */}
-          <section>
-            <h2 className="text-xl font-bold text-white mb-4">4. Information We Collect and How We Collect It</h2>
-            <p className="mb-4">We collect information from and about users of our Website, App and Device:</p>
-            <ul className="list-disc pl-5 space-y-2 text-zinc-400">
-              <li>Directly from you when you provide it to us (e.g., during Setup).</li>
-              <li>Automatically when you use the Website, App or Device (e.g., Device ID, IP Address).</li>
-            </ul>
-            <p className="mt-4">
-               <strong>Location Information:</strong> The App collects real-time information about the location of your device to enrich the conversational functionality (e.g., discussing local weather) and to support Bluetooth connectivity.
-            </p>
-          </section>
-
-          {/* SECTION 5 */}
-          <section>
-            <h2 className="text-xl font-bold text-white mb-4">5. Data Security</h2>
-            <p>
-              We have implemented measures designed to secure your personal information from accidental loss and from unauthorized access. This includes App authentication via ProfessorsAI SSO, and encryption of sensitive information. Communications between the Device and our servers are encrypted using industry-standard protocols.
-            </p>
-          </section>
-
-          {/* SECTION 6 */}
-          <section>
-            <h2 className="text-xl font-bold text-white mb-4">6. Contact Information</h2>
-            <p className="mb-4">
-              To ask questions or comment about this privacy policy and our privacy practices, contact us at:
-            </p>
-            <div className="bg-zinc-900 p-4 rounded-lg inline-block pr-12">
-              <p className="text-white font-bold">AiMasterji Privacy Team</p>
-              <p className="text-zinc-400">ProfessorsAI Headquarters</p>
-              <p className="text-purple-400 mt-2">privacy@professorsai.org</p>
+          {/* â”€â”€ PRIVACY POLICY â”€â”€ */}
+          {activeTab === 'privacy' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white">Privacy Policy</h2>
+              <section>
+                <h3 className="text-white font-bold text-lg mb-3">Introduction</h3>
+                <p>
+                  This Privacy Policy describes how AI Masterji and its affiliates (collectively "AI Masterji, we, our, us") collect, use, share, protect or otherwise process your information/personal data through our website <a href="https://aimasterji.professorsai.org/" className="text-purple-400 underline">https://aimasterji.professorsai.org/</a> (hereinafter referred to as Platform).
+                </p>
+                <p className="mt-3">
+                  Please note that you may be able to browse certain sections of the Platform without registering with us. We do not offer any product/service under this Platform outside India and your personal data will primarily be stored and processed in India. By visiting this Platform, providing your information or availing any product/service offered on the Platform, you expressly agree to be bound by the terms and conditions of this Privacy Policy, the Terms of Use and the applicable service/product terms and conditions.
+                </p>
+              </section>
+              <section>
+                <h3 className="text-white font-bold text-lg mb-3">Collection</h3>
+                <p>
+                  We collect your personal data when you use our Platform, services or otherwise interact with us during the course of our relationship. Some of the information that we may collect includes but is not limited to personal data provided to us during sign-up/registering or using our Platform such as name, date of birth, address, telephone/mobile number, email ID and/or any such information shared as proof of identity or address.
+                </p>
+                <p className="mt-3">
+                  Some sensitive personal data may be collected with your consent, such as bank account or credit or debit card or other payment instrument information. You always have the option to not provide information by choosing not to use a particular service or feature on the Platform.
+                </p>
+                <p className="mt-3">
+                  If you receive an email or a call from a person/association claiming to be AI Masterji seeking any personal data like debit/credit card PIN, net-banking or mobile banking password, we request you to never provide such information.
+                </p>
+              </section>
+              <section>
+                <h3 className="text-white font-bold text-lg mb-3">Usage</h3>
+                <p>
+                  We use personal data to provide the services you request. We use your personal data to assist in handling and fulfilling orders; enhancing customer experience; to resolve disputes; troubleshoot problems; inform you about online and offline offers, products, services, and updates; customise your experience; detect and protect us against error, fraud and other criminal activity; enforce our terms and conditions; and conduct marketing research, analysis and surveys.
+                </p>
+              </section>
+              <section>
+                <h3 className="text-white font-bold text-lg mb-3">Sharing</h3>
+                <p>
+                  We may share your personal data internally within our group entities, our other corporate entities, and affiliates to provide you access to the services and products offered by them. We may disclose personal data to third parties such as sellers, business partners, third-party service providers including logistics partners, and other payment partners as opted by you.
+                </p>
+                <p className="mt-3">
+                  We may disclose personal and sensitive personal data to government agencies or other authorised law enforcement agencies if required to do so by law or in the good faith belief that such disclosure is reasonably necessary to respond to subpoenas, court orders, or other legal process.
+                </p>
+              </section>
+              <section>
+                <h3 className="text-white font-bold text-lg mb-3">Security Precautions</h3>
+                <p>
+                  To protect your personal data from unauthorised access or disclosure, loss or misuse we adopt reasonable security practices and procedures. Once your information is in our possession or whenever you access your account information, we adhere to our security guidelines to protect it against unauthorised access and offer the use of a secure server.
+                </p>
+                <p className="mt-3">
+                  However, the transmission of information is not completely secure for reasons beyond our control. By using the Platform, the users accept the security implications of data transmission over the internet which cannot always be guaranteed as completely secure.
+                </p>
+              </section>
+              <section>
+                <h3 className="text-white font-bold text-lg mb-3">Data Deletion and Retention</h3>
+                <p>
+                  You have an option to delete your account by visiting your profile and settings on our Platform. This action would result in you losing all information related to your account. You may also write to us at the contact information provided below. We may retain data related to you if we believe it may be necessary to prevent fraud or future abuse or for other legitimate purposes. We may continue to retain your data in anonymised form for analytical and research purposes.
+                </p>
+              </section>
+              <section>
+                <h3 className="text-white font-bold text-lg mb-3">Your Rights</h3>
+                <p>You may access, rectify, and update your personal data directly through the functionalities provided on the Platform.</p>
+              </section>
+              <section>
+                <h3 className="text-white font-bold text-lg mb-3">Consent</h3>
+                <p>
+                  By visiting our Platform or by providing your information, you consent to the collection, use, storage, disclosure and otherwise processing of your information on the Platform in accordance with this Privacy Policy. You have an option to withdraw your consent that you have already provided by writing to the Grievance Officer at the contact information provided below.
+                </p>
+              </section>
+              <section>
+                <h3 className="text-white font-bold text-lg mb-3">Changes to this Privacy Policy</h3>
+                <p>Please check our Privacy Policy periodically for changes. We may update this Privacy Policy to reflect changes to our information practices and may alert/notify you about significant changes as required under applicable laws.</p>
+              </section>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-1">
+                <h3 className="text-white font-bold mb-3">Grievance Officer</h3>
+                <p><span className="text-zinc-400">Company:</span> <span className="text-white">AI Masterji</span></p>
+                <p><span className="text-zinc-400">Address:</span> <span className="text-white">Tower A 4th Floor Business Vision Park, Knowledge Park 3, Greater Noida - 201310</span></p>
+                <p><span className="text-zinc-400">Email:</span> <a href="mailto:ai.masterji@aalgorix.com" className="text-purple-400 underline">ai.masterji@aalgorix.com</a></p>
+                <p><span className="text-zinc-400">Hours:</span> <span className="text-white">Monday â€“ Friday, 9:00 â€“ 18:00</span></p>
+              </div>
             </div>
-          </section>
+          )}
+
+          {/* â”€â”€ REFUND & CANCELLATION â”€â”€ */}
+          {activeTab === 'refund' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white">Refund &amp; Cancellation Policy</h2>
+              <p>
+                This refund and cancellation policy outlines how you can cancel or seek a refund for a product/service that you have purchased through the Platform.
+              </p>
+              <ul className="list-disc pl-6 space-y-4 text-zinc-400">
+                <li>
+                  <span className="text-white font-semibold">Cancellation Window:</span> Cancellations will only be considered if the request is made within <strong className="text-white">7 days</strong> of placing the order. However, cancellation requests may not be entertained if the orders have been communicated to the seller/merchant and they have initiated the process of shipping, or the product is out for delivery. In such an event, you may choose to reject the product at the doorstep.
+                </li>
+                <li>
+                  <span className="text-white font-semibold">Perishable Items:</span> AI Masterji does not accept cancellation requests for perishable items like flowers, eatables, etc. However, a refund/replacement can be made if the user establishes that the quality of the product delivered is not good.
+                </li>
+                <li>
+                  <span className="text-white font-semibold">Damaged or Defective Items:</span> In case of receipt of damaged or defective items, please report to our customer service team within <strong className="text-white">7 days</strong> of receipt of products. The request would be entertained once the seller/merchant has checked and determined the same at its own end.
+                </li>
+                <li>
+                  <span className="text-white font-semibold">Product Not as Described:</span> If you feel that the product received is not as shown on the site or as per your expectations, you must bring it to the notice of our customer service within <strong className="text-white">7 days</strong> of receiving the product. The customer service team will take an appropriate decision after looking into your complaint.
+                </li>
+                <li>
+                  <span className="text-white font-semibold">Warranty Issues:</span> In case of complaints regarding products that come with a warranty from the manufacturers, please refer the issue to them directly.
+                </li>
+                <li>
+                  <span className="text-white font-semibold">Refund Processing Time:</span> In case of any refunds approved by AI Masterji, it will take <strong className="text-white">7 days</strong> for the refund to be processed to you.
+                </li>
+              </ul>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                <p className="text-white font-semibold mb-1">Need Help?</p>
+                <p className="text-zinc-400 text-sm">Contact our customer support team via the <a href="/support" className="text-purple-400 underline">Support page</a> or email us at <a href="mailto:ai.masterji@aalgorix.com" className="text-purple-400 underline">ai.masterji@aalgorix.com</a>.</p>
+              </div>
+            </div>
+          )}
+
+          {/* â”€â”€ RETURN POLICY â”€â”€ */}
+          {activeTab === 'return' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white">Return Policy</h2>
+              <p>
+                We offer refund/exchange within the first <strong className="text-white">7 days</strong> from the date of your purchase. If 7 days have passed since your purchase, you will not be offered a return, exchange or refund of any kind.
+              </p>
+              <div className="space-y-4">
+                <h3 className="text-white font-bold text-lg">Eligibility for Return or Exchange</h3>
+                <ul className="list-disc pl-6 space-y-3 text-zinc-400">
+                  <li>The purchased item should be unused and in the same condition as you received it.</li>
+                  <li>The item must have original packaging.</li>
+                  <li>If the item was purchased on sale, it may not be eligible for a return/exchange.</li>
+                  <li>Only such items are replaced by us (based on an exchange request) if such items are found defective or damaged.</li>
+                </ul>
+              </div>
+              <p>
+                You agree that there may be a certain category of products/items that are exempted from returns or refunds. Such categories of products would be identified to you at the time of purchase.
+              </p>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-2">
+                <h3 className="text-white font-bold mb-2">Return Process</h3>
+                <p className="text-zinc-400">
+                  For exchange/return accepted requests, once your returned product/item is received and inspected by us, we will send you an email to notify you about receipt of the returned/exchanged product. If the same has been approved after a quality check at our end, your request (i.e. return/exchange) will be processed in accordance with our policies.
+                </p>
+              </div>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                <p className="text-white font-semibold mb-1">Initiate a Return</p>
+                <p className="text-zinc-400 text-sm">Contact our customer support team via the <a href="/support" className="text-purple-400 underline">Support page</a> or email us at <a href="mailto:ai.masterji@aalgorix.com" className="text-purple-400 underline">ai.masterji@aalgorix.com</a> with your order ID and reason for return.</p>
+              </div>
+            </div>
+          )}
 
         </div>
       </div>

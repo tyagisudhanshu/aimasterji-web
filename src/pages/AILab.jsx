@@ -21,21 +21,44 @@ export default function AILab() {
 
   // 3. THE CONTROL FUNCTION (Connects/Disconnects)
   const handleToggleAI = useCallback(async () => {
+    if (status === 'connected') {
+      await conversation.endSession();
+      return;
+    }
+
     try {
-      if (status === 'connected') {
-        await conversation.endSession();
-      } else {
-        // Request microphone permission first
-        await navigator.mediaDevices.getUserMedia({ audio: true });
-        
-        // START THE SESSION (Replace with your specific Agent ID)
-        await conversation.startSession({
-          agentId: 'agent_8301kgrr5zhke3kvcw8sseen40t4', 
-        });
+      // Check if browser supports microphone API (requires HTTPS)
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Voice chat requires a secure connection (HTTPS). Please access this site via https://');
+        return;
       }
+
+      // Explicitly request mic first so we can catch permission errors separately
+      let micStream;
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (micErr) {
+        if (micErr.name === 'NotAllowedError' || micErr.name === 'PermissionDeniedError') {
+          alert('Microphone permission was denied.\n\nTo fix this:\n1. Click the lock/info icon in your browser address bar\n2. Set Microphone to "Allow"\n3. Refresh the page and try again');
+        } else if (micErr.name === 'NotFoundError') {
+          alert('No microphone found on this device. Please connect a microphone and try again.');
+        } else {
+          alert(`Microphone error: ${micErr.message}`);
+        }
+        return;
+      }
+
+      // Stop the test stream — ElevenLabs SDK opens its own
+      micStream.getTracks().forEach(t => t.stop());
+
+      // Start ElevenLabs AI session
+      await conversation.startSession({
+        agentId: import.meta.env.VITE_ELEVENLABS_AGENT_ID,
+      });
+
     } catch (error) {
-      console.error('Failed to start AI:', error);
-      alert("Microphone access denied. Please allow access to talk.");
+      console.error('Failed to start AI session:', error);
+      alert(`Could not connect to AI: ${error.message || 'Unknown error'}.\n\nPlease check your internet connection and try again.`);
     }
   }, [conversation, status]);
 
