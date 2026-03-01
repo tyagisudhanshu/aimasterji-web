@@ -1,73 +1,103 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Youtube, Heart, Mic } from 'lucide-react';
+import { Instagram, Youtube, Mail, MapPin, Phone } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#050505] border-t border-zinc-900 pt-16 pb-8 text-sm">
-      <div className="container mx-auto px-6">
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          
-          {/* COLUMN 1: BRAND */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center text-2xl font-black tracking-tighter mb-4">
-               <span className="text-white">AI</span> 
-               <span className="text-red-600">masterji</span>
-            </div>
-            <p className="text-zinc-500 mb-6 max-w-sm">
-              Empowering the next generation of innovators with AI companions that teach, play, and grow with you.
-            </p>
-            
-            {/* ELEVENLABS INTEGRATION BADGE */}
-            <a href="https://elevenlabs.io" target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 hover:border-zinc-700 transition-colors group">
-              <div className="w-8 h-8 flex items-center justify-center bg-black rounded-full border border-zinc-800">
-                <Mic size={14} className="text-white group-hover:text-purple-500 transition-colors" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Voice Technology by</span>
-                <span className="text-white font-bold group-hover:text-purple-400 transition-colors">ElevenLabs</span>
-              </div>
-            </a>
+    <footer className="bg-[#050505] border-t border-zinc-900 text-sm">
+
+      <div className="container mx-auto px-6 pt-12 pb-0">
+
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-14">
+
+          {/* LOGO COLUMN */}
+          <div className="col-span-2 md:col-span-1">
+            <Link to="/" className="inline-flex items-center gap-1 mb-4">
+              <span className="text-xl font-black tracking-tighter text-white">AI</span>
+              <span className="text-xl font-black tracking-tighter text-red-500">masterji</span>
+            </Link>
+            <p className="text-zinc-600 text-xs leading-relaxed">India's First AI Robotics Brand</p>
           </div>
 
-          {/* COLUMN 2: SHOP */}
+          {/* SHOP */}
           <div>
-            <h4 className="text-white font-bold mb-4">Shop</h4>
+            <h4 className="text-white font-bold mb-5 text-xs uppercase tracking-widest">Shop</h4>
             <ul className="space-y-3 text-zinc-500">
-              <li><Link to="/product/1" className="hover:text-white transition-colors">Mimi (Starter)</Link></li>
-              <li><Link to="/product/2" className="hover:text-white transition-colors">Simba (Code)</Link></li>
-              <li><Link to="/product/4" className="hover:text-white transition-colors">Prince (Pro)</Link></li>
+              <li><Link to="/product/1" className="hover:text-white transition-colors">Mimi — Starter</Link></li>
+              <li><Link to="/product/2" className="hover:text-white transition-colors">Simba — Code</Link></li>
+              <li><Link to="/product/4" className="hover:text-white transition-colors">Prince — Pro</Link></li>
               <li><Link to="/cart" className="hover:text-white transition-colors">My Cart</Link></li>
+              <li><Link to="/orders" className="hover:text-white transition-colors">My Orders</Link></li>
             </ul>
           </div>
 
-          {/* COLUMN 3: LEGAL & SUPPORT */}
+          {/* COMPANY */}
           <div>
-            <h4 className="text-white font-bold mb-4">Support</h4>
+            <h4 className="text-white font-bold mb-5 text-xs uppercase tracking-widest">Company</h4>
             <ul className="space-y-3 text-zinc-500">
-              <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><a href="mailto:support@professorsai.org" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Returns</a></li>
+              <li><Link to="/why-aimasterji" className="hover:text-white transition-colors">About Us</Link></li>
+              <li><Link to="/try-it-out" className="hover:text-white transition-colors">AI Lab</Link></li>
+              <li><Link to="/sale" className="hover:text-white transition-colors">Offers &amp; Sale</Link></li>
+              <li><Link to="/support" className="hover:text-white transition-colors">Support</Link></li>
+              <li><a href="mailto:ai.masterji@aalgorix.com" className="hover:text-white transition-colors">Contact Us</a></li>
+            </ul>
+          </div>
+
+          {/* POLICIES */}
+          <div>
+            <h4 className="text-white font-bold mb-5 text-xs uppercase tracking-widest">Policies</h4>
+            <ul className="space-y-3 text-zinc-500">
+              <li><Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms-and-conditions" className="hover:text-white transition-colors">Terms &amp; Conditions</Link></li>
+              <li><Link to="/refund-policy" className="hover:text-white transition-colors">Refund &amp; Cancellation</Link></li>
+              <li><Link to="/return-policy" className="hover:text-white transition-colors">Return Policy</Link></li>
+              <li><Link to="/shipping-policy" className="hover:text-white transition-colors">Shipping Policy</Link></li>
+            </ul>
+          </div>
+
+          {/* CONTACT */}
+          <div>
+            <h4 className="text-white font-bold mb-5 text-xs uppercase tracking-widest">Get in Touch</h4>
+            <ul className="space-y-4 text-zinc-500">
+              <li className="flex items-start gap-3">
+                <MapPin size={15} className="text-zinc-600 mt-0.5 shrink-0" />
+                <span>Tower A 4th Floor, Business Vision Park, Knowledge Park 3, Greater Noida — 201310</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail size={15} className="text-zinc-600 shrink-0" />
+                <a href="mailto:ai.masterji@aalgorix.com" className="hover:text-white transition-colors break-all">ai.masterji@aalgorix.com</a>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone size={15} className="text-zinc-600 shrink-0" />
+                <a href="tel:+919310297919" className="hover:text-white transition-colors">+91 93102 97919</a>
+              </li>
             </ul>
           </div>
 
         </div>
 
         {/* BOTTOM BAR */}
-        <div className="border-t border-zinc-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-zinc-600">© 2026 AiMasterji. All rights reserved.</p>
+        <div className="border-t border-zinc-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-5">
           
-          <div className="flex gap-4">
-            <a href="#" className="text-zinc-600 hover:text-white transition-colors"><Facebook size={20} /></a>
-            <a href="#" className="text-zinc-600 hover:text-white transition-colors"><Twitter size={20} /></a>
-            <a href="#" className="text-zinc-600 hover:text-white transition-colors"><Instagram size={20} /></a>
-            <a href="#" className="text-zinc-600 hover:text-white transition-colors"><Youtube size={20} /></a>
-          </div>
-        </div>
+          <p className="text-zinc-600 text-xs">
+            © {new Date().getFullYear()} AI Masterji · Aalgorix Technologies Pvt. Ltd. · All rights reserved.
+          </p>
 
+          <div className="flex items-center gap-5">
+            <a href="https://www.instagram.com" target="_blank" rel="noreferrer" className="text-zinc-600 hover:text-pink-400 transition-colors" aria-label="Instagram">
+              <Instagram size={18} />
+            </a>
+            <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="text-zinc-600 hover:text-red-500 transition-colors" aria-label="YouTube">
+              <Youtube size={18} />
+            </a>
+            <a href="mailto:ai.masterji@aalgorix.com" className="text-zinc-600 hover:text-purple-400 transition-colors" aria-label="Email">
+              <Mail size={18} />
+            </a>
+          </div>
+
+        </div>
       </div>
+
     </footer>
   );
 }

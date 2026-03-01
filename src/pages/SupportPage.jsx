@@ -23,7 +23,7 @@ export default function SupportPage() {
                   <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center text-purple-400"><Mail size={20}/></div>
                   <div>
                     <p className="text-xs text-zinc-500 font-bold uppercase">Email Us</p>
-                    <p>help@aimasterji.com</p>
+                    <p>ai.masterji@aalgorix.com</p>
                   </div>
                 </div>
 
@@ -31,7 +31,7 @@ export default function SupportPage() {
                   <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-green-400"><Phone size={20}/></div>
                   <div>
                     <p className="text-xs text-zinc-500 font-bold uppercase">Call Us</p>
-                    <p>+1 (800) 123-ROBO</p>
+                    <p>+91 93102 97919</p>
                   </div>
                 </div>
 
@@ -39,7 +39,7 @@ export default function SupportPage() {
                   <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-400"><MapPin size={20}/></div>
                   <div>
                     <p className="text-xs text-zinc-500 font-bold uppercase">HQ Location</p>
-                    <p>123 AI Boulevard, Tech City</p>
+                    <p>Tower A 4th Floor, Business Vision Park, Knowledge Park 3, Greater Noida — 201310</p>
                   </div>
                 </div>
               </div>

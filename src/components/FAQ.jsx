@@ -17,6 +17,26 @@ const faqs = [
   {
     question: "Does it work without WiFi?",
     answer: "The robot needs WiFi for the AI to work. However, it has an 'Offline Mode' where it can play pre-downloaded stories and games without internet."
+  },
+  {
+    question: "What measures does AI Masterji take to protect children's data?",
+    answer: "AI Masterji operates under strict COPPA compliance, including: custom no-data-sharing agreements with our vendors, collecting parent consent before processing data, and allowing parents to permanently delete their child's data via the AI Masterji app."
+  },
+  {
+    question: "How does AI Masterji ensure the safety and privacy of user data?",
+    answer: "AI Masterji uses multi-stage encryption, authentication, tokenization, and public/private key cryptography to protect all user data. We develop hardware, firmware, software, and cloud infrastructure in-house, which allows us to maintain a high level of security throughout."
+  },
+  {
+    question: "Are AI Masterji toys safe for young children?",
+    answer: "Children's safety is our top priority. All AI Masterji toys are carefully crafted to ensure they are free of hazards and adhere to strict safety guidelines. We maintain strict compliance with COPPA and other child privacy laws. Our commitment is to provide a safe, secure, and enjoyable experience for kids — guaranteeing peace of mind for parents."
+  },
+  {
+    question: "What languages are currently supported?",
+    answer: "Currently, our toys support Hindi and English. However, we are working on expanding language support. You can purchase now and update language support later. Subscribe to our newsletter to stay updated!"
+  },
+  {
+    question: "How long is the battery life per charge?",
+    answer: "The battery is designed to last 12–16 hours of continuous play time. For many families, this can be over a week with standard usage."
   }
 ];
 
@@ -49,7 +69,7 @@ export default function FAQ() {
               
               <div 
                 className={`transition-all duration-300 ease-in-out ${
-                  openIndex === index ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
+                  openIndex === index ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
                 <div className="p-6 pt-0 text-zinc-400 leading-relaxed">

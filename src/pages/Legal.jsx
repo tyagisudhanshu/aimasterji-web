@@ -71,7 +71,7 @@ export default function Legal() {
                 This document is published in accordance with the provisions of Rule 3(1) of the Information Technology (Intermediaries guidelines) Rules, 2011 that require publishing the rules and regulations, privacy policy and Terms of Use for access or usage of domain name <a href="https://aimasterji.professorsai.org/" className="text-purple-400 underline">https://aimasterji.professorsai.org/</a> ('Website'), including the related mobile site and mobile application (hereinafter referred to as 'Platform').
               </p>
               <p>
-                The Platform is owned by <strong className="text-white">AI Masterji</strong>, a company incorporated under the Companies Act, 1956 with its registered office at Rohit Verma, Tower A 4th Floor Business Vision Park, Knowledge Park 3, Greater Noida - 201310 (hereinafter referred to as 'Platform Owner', 'we', 'us', 'our').
+                The Platform is owned by <strong className="text-white">Aalgorix</strong>, a company incorporated under the Companies Act, 1956 with its registered office at Rohit Verma, Tower A 4th Floor Business Vision Park, Knowledge Park 3, Greater Noida - 201310 (hereinafter referred to as 'Platform Owner', 'we', 'us', 'our').
               </p>
               <p>
                 Your use of the Platform and services and tools are governed by the following terms and conditions ("Terms of Use") as applicable to the Platform including the applicable policies which are incorporated herein by way of reference. If You transact on the Platform, You shall be subject to the policies that are applicable to the Platform for such transaction. By mere use of the Platform, You shall be contracting with the Platform Owner and these terms and conditions including the policies constitute Your binding obligations with Platform Owner.
@@ -177,10 +177,10 @@ export default function Legal() {
               </section>
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-1">
                 <h3 className="text-white font-bold mb-3">Grievance Officer</h3>
-                <p><span className="text-zinc-400">Company:</span> <span className="text-white">AI Masterji</span></p>
+                <p><span className="text-zinc-400">Company:</span> <span className="text-white">Aalgorix</span></p>
                 <p><span className="text-zinc-400">Address:</span> <span className="text-white">Tower A 4th Floor Business Vision Park, Knowledge Park 3, Greater Noida - 201310</span></p>
                 <p><span className="text-zinc-400">Email:</span> <a href="mailto:ai.masterji@aalgorix.com" className="text-purple-400 underline">ai.masterji@aalgorix.com</a></p>
-                <p><span className="text-zinc-400">Hours:</span> <span className="text-white">Monday â€“ Friday, 9:00 â€“ 18:00</span></p>
+                <p><span className="text-zinc-400">Hours:</span> <span className="text-white">Monday - Friday, 9:00 - 18:00</span></p>
               </div>
             </div>
           )}
@@ -247,6 +247,47 @@ export default function Legal() {
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
                 <p className="text-white font-semibold mb-1">Initiate a Return</p>
                 <p className="text-zinc-400 text-sm">Contact our customer support team via the <a href="/support" className="text-purple-400 underline">Support page</a> or email us at <a href="mailto:ai.masterji@aalgorix.com" className="text-purple-400 underline">ai.masterji@aalgorix.com</a> with your order ID and reason for return.</p>
+              </div>
+            </div>
+          )}
+
+          {/* ── SHIPPING POLICY ── */}
+          {activeTab === 'shipping' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white">Shipping Policy</h2>
+
+              <p>
+                The orders for the user are shipped through registered domestic courier companies and/or speed post only.
+              </p>
+
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                <div>
+                  <h3 className="text-white font-semibold mb-1">Dispatch Timeframe</h3>
+                  <p className="text-zinc-400">Orders are shipped within <strong className="text-white">15 days</strong> from the date of the order and/or payment, or as per the delivery date agreed at the time of order confirmation, subject to courier company / post office norms.</p>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-1">Delivery Address</h3>
+                  <p className="text-zinc-400">Delivery of all orders will be made to the address provided by the buyer at the time of purchase.</p>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-1">Delivery Confirmation</h3>
+                  <p className="text-zinc-400">Delivery of our services will be confirmed on your email ID as specified at the time of registration.</p>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-1">Shipping Charges</h3>
+                  <p className="text-zinc-400">If there are any shipping cost(s) levied by the seller or the Platform Owner, the same is <strong className="text-white">not refundable</strong>.</p>
+                </div>
+              </div>
+
+              <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5">
+                <p className="text-zinc-500 text-sm">
+                  <strong className="text-white">Note:</strong> The Platform Owner shall not be liable for any delay in delivery by the courier company / postal authority.
+                </p>
+              </div>
+
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                <p className="text-white font-semibold mb-1">Shipping Enquiries</p>
+                <p className="text-zinc-400 text-sm">For any shipping-related queries, contact us via the <a href="/support" className="text-purple-400 underline">Support page</a> or email <a href="mailto:ai.masterji@aalgorix.com" className="text-purple-400 underline">ai.masterji@aalgorix.com</a>.</p>
               </div>
             </div>
           )}

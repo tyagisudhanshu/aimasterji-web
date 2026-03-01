@@ -78,6 +78,14 @@ export default function Navbar() {
     navigate('/login');
   };
 
+  const handleDashboardClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      navigate('/login');
+    }
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <nav className={`fixed left-0 right-0 z-50 flex flex-col items-center transition-transform duration-300 ${isVisible ? 'translate-y-2' : '-translate-y-full'}`}>
       
@@ -96,11 +104,8 @@ export default function Navbar() {
         {/* LINKS SECTION */}
         <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-300">
            
-           {user ? (
-             <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors">Dashboard</Link>
-           ) : (
-             <Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors">Home</Link>
-           )}
+           <Link to="/" onClick={scrollToTop} className="hover:text-white transition-colors">Home</Link>
+           <Link to="/dashboard" onClick={handleDashboardClick} className="hover:text-white transition-colors">Dashboard</Link>
            
            {/* PRODUCT DROPDOWN */}
            <div className="relative group">
@@ -127,6 +132,9 @@ export default function Navbar() {
                </div>
              </div>
            </div>
+
+           {/* ABOUT US LINK */}
+           <Link to="/about" className="hover:text-white transition-colors">About Us</Link>
 
            {/* SALE BUTTON (Red & Bold) */}
            <Link to="/sale" className="text-red-500 font-bold hover:text-red-400 transition-colors flex items-center gap-1 animate-pulse">
@@ -231,12 +239,10 @@ export default function Navbar() {
        {/* MOBILE MENU */}
        {isMobileMenuOpen && (
         <div className="md:hidden bg-zinc-950 border-t border-zinc-800 absolute top-full mt-4 w-[99%] rounded-2xl p-6 flex flex-col gap-6 text-zinc-300 shadow-2xl">
-          {user ? (
-            <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-purple-400">Dashboard</Link>
-          ) : (
-            <Link to="/" onClick={scrollToTop} className="text-xl font-bold text-white">Home</Link>
-          )}
+          <Link to="/" onClick={scrollToTop} className="text-xl font-bold text-white">Home</Link>
+          <Link to="/dashboard" onClick={handleDashboardClick} className="text-xl font-bold text-purple-400">Dashboard</Link>
           <Link to="/sale" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-red-500">Sale 🔥</Link>
+          <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-white">About Us</Link>
           <Link to="/support" onClick={() => setIsMobileMenuOpen(false)} className="text-xl text-white">Support</Link>
           
           <div className="flex flex-col gap-2 border-l-2 border-zinc-800 pl-4">
@@ -250,9 +256,6 @@ export default function Navbar() {
 
           {user ? (
             <>
-              <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-purple-400 flex items-center gap-2">
-                <LayoutDashboard size={20} /> Dashboard
-              </Link>
               <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-blue-400 flex items-center gap-2">
                 <ClipboardList size={20} /> Order History
               </Link>

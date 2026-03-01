@@ -13,7 +13,6 @@ import FAQ from './components/FAQ'; // Import FAQ
 import WhatsAppButton from './components/WhatsAppButton';
 
 // PAGES
-import About from './pages/About';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
@@ -30,6 +29,7 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import PaymentResultPage from './pages/PaymentResultPage';
+import AboutUs from './pages/AboutUs';
 
 // AUTH
 import { AuthProvider } from './context/AuthContext';
@@ -65,7 +65,7 @@ export default function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/why-aimasterji" element={<About />} />
+            <Route path="/why-aimasterji" element={<AboutUs />} />
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
@@ -88,6 +88,7 @@ export default function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/payment-result" element={<PaymentResultPage />} />
+            <Route path="/about" element={<AboutUs />} />
           </Routes>
         </main>
 
