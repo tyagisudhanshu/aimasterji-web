@@ -31,7 +31,7 @@ export default function PaymentResultPage() {
       getDoc(doc(db, 'orders', orderId)).then(snap => {
         if (!snap.exists()) return;
         const order = snap.data();
-        const adminWa = import.meta.env.VITE_ADMIN_WHATSAPP || '919310297919';
+        const adminWa = import.meta.env.VITE_ADMIN_WHATSAPP || '918882564994';
         const lines = (order.items || []).map(
           i => `  • ${i.name} x${i.quantity} = ₹${(Number(i.price?.toString().replace(/[^0-9.]/g,'')) * i.quantity).toLocaleString('en-IN')}`
         ).join('\n');

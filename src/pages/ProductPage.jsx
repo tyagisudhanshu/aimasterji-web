@@ -13,11 +13,11 @@ export default function ProductPage() {
   const { addToCart } = useCart();
 
   const handleWhatsAppQuery = () => {
-  const phoneNumber = "919310297919"; // Replace with your actual number
+  const phoneNumber = "918882564994"; // Replace with your actual number
   const message = `Hi! I'm interested in buying ${product.name} (Price: ${product.price}). Can you provide more details about its features for a 3-year-old?`;
   
   // This opens WhatsApp in a new tab
-  window.open(`https://wa.me/${919310297919}?text=${encodeURIComponent(message)}`, '_blank');
+  window.open(`https://wa.me/${918882564994}?text=${encodeURIComponent(message)}`, '_blank');
 };
 
   // Scroll to top ONLY when this product page loads

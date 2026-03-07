@@ -2,10 +2,10 @@ import React from 'react';
 import { MessageCircle } from 'lucide-react'; // Using Lucide icon
 
 export default function WhatsAppButton() {
-  const phoneNumber = "919310297919"; // Replace with your actual business number (with country code)
+  const phoneNumber = "918882564994"; // Replace with your actual business number (with country code)
   const message = "Hello! I'm interested in the Masterji AI Toys. Can you help me?";
   
-  const whatsappUrl = `https://wa.me/${+919310297919}?text=${encodeURIComponent(message)}`;
+  const whatsappUrl = `https://wa.me/${918882564994}?text=${encodeURIComponent(message)}`;
 
   return (
     <a 

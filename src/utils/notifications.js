@@ -10,7 +10,7 @@ import emailjs from '@emailjs/browser';
 const SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ORDER;
 const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-const ADMIN_WA    = import.meta.env.VITE_ADMIN_WHATSAPP || '919310297919';
+const ADMIN_WA    = import.meta.env.VITE_ADMIN_WHATSAPP || '918882564994';
 
 /**
  * Send order confirmation email to customer via EmailJS.
