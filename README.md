@@ -30,7 +30,7 @@
 │  ⏰  24/7 Availability (Never Gets Tired!)             │
 │  🎨  Fully Customizable (Screen Optional)              │
 │  🔒  100% Secure (No Data Harvesting)                  │
-│  🗣️  Parent Voice Cloning (Comfort When You're Away)   │     │
+│  🗣️  Parent Voice Cloning (Comfort When You're Away)   │     
 └─────────────────────────────────────────────────────────┘
 ```
 
